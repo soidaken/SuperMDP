@@ -1,0 +1,678 @@
+/* ==========================================================================
+   SuperMDP — 应用外壳样式 (ui.css)
+   只读 Markdown 预览器 · Wails v2 (Go + WebView2) · Vite + React + TS
+   包含：设计令牌(唯一来源) + 基础重置 + 滚动条 + 工具栏/目录/阅读区/
+         空状态/拖拽遮罩/状态栏/设置弹层/快捷键键帽 + 响应式
+   DOM 契约见 docs/design/design-spec.md §5、§6
+   ========================================================================== */
+
+/* ==========================================================================
+   1. 设计令牌
+   ========================================================================== */
+
+:root {
+  /* ---- 色板 Light ---- */
+  --mdp-bg: #f7f8fa;                 /* 应用底色 */
+  --mdp-bg-raised: #ffffff;          /* 浮起面：弹层、代码块头部 */
+  --mdp-bg-hover: #eef1f5;           /* 悬停态 */
+  --mdp-bg-active: #e4e9f0;          /* 按下态 */
+  --mdp-bg-sunken: #f1f3f6;          /* 凹陷面：表头、引用块 */
+  --mdp-code-bg: #f2f4f7;            /* 代码块底色 */
+  --mdp-inline-code-bg: #eceff3;     /* 行内代码底色 */
+  --mdp-border: #e3e6eb;             /* 1px 细边框 */
+  --mdp-border-strong: #cfd5dd;      /* 强调边框 */
+  --mdp-fg: #1f2430;                 /* 主文本 */
+  --mdp-fg-muted: #5b6472;           /* 次级文本 */
+  --mdp-fg-faint: #8b94a3;           /* 三级文本 */
+  --mdp-accent: #2563eb;             /* 强调色 */
+  --mdp-accent-hover: #1d4ed8;
+  --mdp-accent-soft: rgba(37, 99, 235, 0.10);
+  --mdp-accent-contrast: #ffffff;
+  --mdp-selection: rgba(37, 99, 235, 0.20);
+  --mdp-scrollbar: #c9cfd8;
+  --mdp-scrollbar-hover: #aab2bf;
+  --mdp-kbd-bg: #f1f3f6;
+  --mdp-kbd-border: #d4d9e0;
+  --mdp-kbd-fg: #4b5563;
+  --mdp-overlay-bg: rgba(15, 17, 21, 0.45);
+  --mdp-overlay-border: rgba(255, 255, 255, 0.85);
+  --mdp-overlay-fg: #ffffff;
+  --mdp-danger: #d1242f;
+
+  /* ---- 语法高亮 Light（hljs，见 markdown-theme.css） ---- */
+  --mdp-syn-comment: #7d8590;
+  --mdp-syn-keyword: #7c3aed;
+  --mdp-syn-string: #1a7f37;
+  --mdp-syn-number: #b45309;
+  --mdp-syn-title: #2563eb;
+  --mdp-syn-builtin: #0891b2;
+  --mdp-syn-attr: #0f766e;
+  --mdp-syn-params: #374151;
+  --mdp-syn-meta: #6b7280;
+  --mdp-syn-deletion: #d1242f;
+  --mdp-syn-deletion-bg: rgba(209, 36, 47, 0.10);
+  --mdp-syn-addition: #1a7f37;
+  --mdp-syn-addition-bg: rgba(26, 127, 55, 0.10);
+
+  /* ---- 字体 ---- */
+  --mdp-font-sans: "Segoe UI", "Microsoft YaHei", "PingFang SC",
+                   "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+  --mdp-font-mono: "JetBrains Mono", Consolas, "Cascadia Mono",
+                   "SF Mono", Menlo, monospace;
+  --mdp-font-size-base: 15px;
+  --mdp-font-size-sm: 13px;
+  --mdp-font-size-xs: 12px;
+
+  /* ---- 间距（4px 基） ---- */
+  --mdp-space-1: 4px;
+  --mdp-space-2: 8px;
+  --mdp-space-3: 12px;
+  --mdp-space-4: 16px;
+  --mdp-space-5: 20px;
+  --mdp-space-6: 24px;
+  --mdp-space-8: 32px;
+  --mdp-space-10: 40px;
+  --mdp-space-12: 48px;
+  --mdp-space-16: 64px;
+
+  /* ---- 圆角 ---- */
+  --mdp-radius-sm: 4px;
+  --mdp-radius-md: 6px;
+  --mdp-radius-lg: 10px;
+  --mdp-radius-full: 999px;
+
+  /* ---- 阴影（极淡） ---- */
+  --mdp-shadow-sm: 0 1px 2px rgba(15, 17, 21, 0.05);
+  --mdp-shadow-md: 0 2px 8px rgba(15, 17, 21, 0.08);
+  --mdp-shadow-lg: 0 6px 24px rgba(15, 17, 21, 0.12);
+
+  /* ---- 过渡 ---- */
+  --mdp-duration-fast: 150ms;
+  --mdp-duration: 200ms;
+  --mdp-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- 布局尺寸 ---- */
+  --mdp-toolbar-h: 44px;
+  --mdp-statusbar-h: 26px;
+  --mdp-toc-w: 240px;
+  --mdp-content-max-w: 760px;
+  --mdp-content-pad: 48px;
+
+  /* ---- z-index ---- */
+  --mdp-z-toolbar: 100;
+  --mdp-z-popover: 300;
+  --mdp-z-overlay: 400;
+}
+
+[data-theme="dark"] {
+  /* ---- 色板 Dark：低饱和深灰蓝，避免纯黑 ---- */
+  --mdp-bg: #0f1115;
+  --mdp-bg-raised: #151a21;
+  --mdp-bg-hover: #1a2029;
+  --mdp-bg-active: #212936;
+  --mdp-bg-sunken: #0b0d10;
+  --mdp-code-bg: #14181f;
+  --mdp-inline-code-bg: #1c222c;
+  --mdp-border: #232a35;
+  --mdp-border-strong: #363f4d;
+  --mdp-fg: #e7eaf0;
+  --mdp-fg-muted: #9aa3b2;
+  --mdp-fg-faint: #667085;
+  --mdp-accent: #6ea8fe;
+  --mdp-accent-hover: #93c5fd;
+  --mdp-accent-soft: rgba(110, 168, 254, 0.14);
+  --mdp-accent-contrast: #0d1117; /* 亮蓝按钮上用深字，对比度更佳 */
+  --mdp-selection: rgba(110, 168, 254, 0.30);
+  --mdp-scrollbar: #2c3442;
+  --mdp-scrollbar-hover: #3e4a5c;
+  --mdp-kbd-bg: #1a2029;
+  --mdp-kbd-border: #2e3745;
+  --mdp-kbd-fg: #b8c2d0;
+  --mdp-overlay-bg: rgba(10, 12, 16, 0.55);
+  --mdp-overlay-border: rgba(255, 255, 255, 0.80);
+  --mdp-overlay-fg: #ffffff;
+  --mdp-danger: #f87171;
+
+  /* ---- 语法高亮 Dark ---- */
+  --mdp-syn-comment: #667085;
+  --mdp-syn-keyword: #a78bfa;
+  --mdp-syn-string: #6ee7b7;
+  --mdp-syn-number: #fbbf24;
+  --mdp-syn-title: #6ea8fe;
+  --mdp-syn-builtin: #22d3ee;
+  --mdp-syn-attr: #5eead4;
+  --mdp-syn-params: #cbd5e1;
+  --mdp-syn-meta: #94a3b8;
+  --mdp-syn-deletion: #f87171;
+  --mdp-syn-deletion-bg: rgba(248, 113, 113, 0.14);
+  --mdp-syn-addition: #4ade80;
+  --mdp-syn-addition-bg: rgba(74, 222, 128, 0.14);
+
+  /* 暗面分层靠边框，阴影极淡即可 */
+  --mdp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --mdp-shadow-md: 0 2px 10px rgba(0, 0, 0, 0.40);
+  --mdp-shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.50);
+}
+
+/* ==========================================================================
+   2. 基础重置
+   ========================================================================== */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* 应用外壳自带滚动区 */
+}
+
+body {
+  font-family: var(--mdp-font-sans);
+  font-size: var(--mdp-font-size-base);
+  line-height: 1.6;
+  color: var(--mdp-fg);
+  background: var(--mdp-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--mdp-selection); }
+
+/* 键盘导航可见焦点，鼠标点击不显示 */
+:focus-visible {
+  outline: 2px solid var(--mdp-accent);
+  outline-offset: 2px;
+  border-radius: var(--mdp-radius-sm);
+}
+
+/* ==========================================================================
+   3. 滚动条（细、圆角、muted）
+   ========================================================================== */
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+
+::-webkit-scrollbar-thumb {
+  background: var(--mdp-scrollbar);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mdp-scrollbar-hover);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ==========================================================================
+   4. 应用骨架
+   ========================================================================== */
+
+.mdp-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.mdp-main {
+  display: grid;
+  grid-template-columns: var(--mdp-toc-w) minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  transition: grid-template-columns var(--mdp-duration) var(--mdp-ease);
+}
+
+/* 目录折叠 */
+.mdp-main.toc-collapsed { grid-template-columns: 0 minmax(0, 1fr); }
+
+.mdp-main.toc-collapsed .mdp-toc { border-right: none; }
+
+/* ==========================================================================
+   5. 工具栏
+   ========================================================================== */
+
+.mdp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--mdp-toolbar-h);
+  padding: 0 10px;
+  background: var(--mdp-bg);
+  border-bottom: 1px solid var(--mdp-border);
+  z-index: var(--mdp-z-toolbar);
+  flex: none;
+}
+
+.mdp-toolbar .mdp-appname {
+  margin-right: 8px;
+  font-size: var(--mdp-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--mdp-fg-muted);
+  user-select: none;
+}
+
+.mdp-toolbar-spacer { flex: 1; }
+
+.mdp-toolbar-sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: var(--mdp-border);
+}
+
+/* ---------- 按钮 ---------- */
+
+.mdp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: var(--mdp-font-size-sm);
+  font-weight: 500;
+  color: var(--mdp-fg);
+  background: var(--mdp-bg-raised);
+  border: 1px solid var(--mdp-border);
+  border-radius: var(--mdp-radius-sm);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color var(--mdp-duration-fast) var(--mdp-ease),
+              border-color var(--mdp-duration-fast) var(--mdp-ease),
+              color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-btn:hover {
+  background: var(--mdp-bg-hover);
+  border-color: var(--mdp-border-strong);
+}
+
+.mdp-btn:active { background: var(--mdp-bg-active); }
+
+.mdp-btn .mdp-icon { width: 15px; height: 15px; flex: none; }
+
+/* 主按钮：accent 三大出场位之一 */
+.mdp-btn-primary {
+  background: var(--mdp-accent);
+  border-color: var(--mdp-accent);
+  color: var(--mdp-accent-contrast);
+}
+
+.mdp-btn-primary:hover {
+  background: var(--mdp-accent-hover);
+  border-color: var(--mdp-accent-hover);
+}
+
+.mdp-btn-primary:active { filter: brightness(0.94); }
+
+/* ---------- 图标按钮 ---------- */
+
+.mdp-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  color: var(--mdp-fg-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--mdp-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--mdp-duration-fast) var(--mdp-ease),
+              color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-icon-btn:hover { background: var(--mdp-bg-hover); color: var(--mdp-fg); }
+
+.mdp-icon-btn:active { background: var(--mdp-bg-active); }
+
+/* 激活态（如目录开关） */
+.mdp-icon-btn.active {
+  color: var(--mdp-accent);
+  background: var(--mdp-accent-soft);
+}
+
+.mdp-icon-btn .mdp-icon { width: 16px; height: 16px; }
+
+/* ==========================================================================
+   6. 目录侧栏
+   ========================================================================== */
+
+.mdp-toc {
+  background: var(--mdp-bg);
+  border-right: 1px solid var(--mdp-border);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 0 16px;
+  min-height: 0;
+}
+
+.mdp-toc-title {
+  padding: 8px 18px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mdp-fg-faint);
+  user-select: none;
+}
+
+.mdp-toc-item {
+  display: block;
+  padding: 4px 18px;
+  font-size: var(--mdp-font-size-sm);
+  line-height: 1.45;
+  color: var(--mdp-fg-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--mdp-duration-fast) var(--mdp-ease),
+              background-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-toc-item:hover {
+  color: var(--mdp-fg);
+  background: var(--mdp-bg-hover);
+}
+
+/* 激活项：accent 左边条 */
+.mdp-toc-item.active {
+  color: var(--mdp-accent);
+  border-left-color: var(--mdp-accent);
+  background: var(--mdp-accent-soft);
+}
+
+/* 嵌套层级（lvl-N = 标题级数 hN） */
+.mdp-toc-item.lvl-1 { padding-left: 18px; }
+.mdp-toc-item.lvl-2 { padding-left: 32px; }
+.mdp-toc-item.lvl-3 { padding-left: 46px; }
+.mdp-toc-item.lvl-4 { padding-left: 60px; }
+.mdp-toc-item.lvl-5 { padding-left: 74px; }
+.mdp-toc-item.lvl-6 { padding-left: 88px; }
+
+/* ==========================================================================
+   7. 阅读区
+   ========================================================================== */
+
+.mdp-content {
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--mdp-bg);
+}
+
+.mdp-content-body {
+  max-width: var(--mdp-content-max-w);
+  margin: 0 auto;
+  padding: var(--mdp-space-10) var(--mdp-content-pad) var(--mdp-space-16);
+}
+
+/* ---------- 空状态 ---------- */
+
+.mdp-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: var(--mdp-space-8);
+  text-align: center;
+}
+
+.mdp-empty-icon {
+  width: 56px;
+  height: 56px;
+  color: var(--mdp-fg-faint);
+  margin-bottom: var(--mdp-space-3);
+}
+
+.mdp-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mdp-fg);
+}
+
+.mdp-empty-hint {
+  font-size: var(--mdp-font-size-sm);
+  color: var(--mdp-fg-muted);
+  line-height: 1.7;
+}
+
+.mdp-empty-hint .mdp-kbd { margin: 0 2px; }
+
+/* ==========================================================================
+   8. 状态栏
+   ========================================================================== */
+
+.mdp-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: var(--mdp-statusbar-h);
+  padding: 0 12px;
+  font-size: var(--mdp-font-size-xs);
+  color: var(--mdp-fg-muted);
+  background: var(--mdp-bg);
+  border-top: 1px solid var(--mdp-border);
+  white-space: nowrap;
+  flex: none;
+  user-select: none;
+}
+
+.mdp-statusbar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mdp-statusbar-filename {
+  font-weight: 500;
+  color: var(--mdp-fg);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mdp-statusbar-spacer { flex: 1; }
+
+/* ==========================================================================
+   9. 快捷键键帽
+   ========================================================================== */
+
+.mdp-kbd {
+  font-family: var(--mdp-font-mono);
+  font-size: 0.85em;
+  color: var(--mdp-kbd-fg);
+  background: var(--mdp-kbd-bg);
+  border: 1px solid var(--mdp-kbd-border);
+  border-radius: var(--mdp-radius-sm);
+  padding: 1px 6px;
+  box-shadow: 0 1px 0 var(--mdp-kbd-border);
+}
+
+/* ==========================================================================
+   10. 设置弹层
+   ========================================================================== */
+
+.mdp-popover-anchor { position: relative; }
+
+.mdp-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 232px;
+  z-index: var(--mdp-z-popover);
+  background: var(--mdp-bg-raised);
+  border: 1px solid var(--mdp-border);
+  border-radius: var(--mdp-radius-md);
+  box-shadow: var(--mdp-shadow-md);
+  padding: 14px 16px;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity var(--mdp-duration-fast) var(--mdp-ease),
+              transform var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-popover.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mdp-popover-title {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mdp-fg-faint);
+  user-select: none;
+}
+
+.mdp-popover-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.mdp-popover-label {
+  font-size: var(--mdp-font-size-sm);
+  color: var(--mdp-fg);
+}
+
+.mdp-popover-desc {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--mdp-fg-faint);
+}
+
+/* ---------- 开关 ---------- */
+
+.mdp-switch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: var(--mdp-radius-full);
+  background: var(--mdp-border-strong);
+  cursor: pointer;
+  transition: background-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: var(--mdp-shadow-sm);
+  transition: transform var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-switch[aria-checked="true"] { background: var(--mdp-accent); }
+
+.mdp-switch[aria-checked="true"]::after { transform: translateX(14px); }
+
+/* ==========================================================================
+   11. 拖拽遮罩
+   ========================================================================== */
+
+.mdp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--mdp-z-overlay);
+  background: var(--mdp-overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity var(--mdp-duration) var(--mdp-ease);
+}
+
+.mdp-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 虚线内框 */
+.mdp-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 2px dashed var(--mdp-overlay-border);
+  border-radius: var(--mdp-radius-lg);
+  pointer-events: none;
+}
+
+.mdp-overlay-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--mdp-overlay-fg);
+  user-select: none;
+}
+
+.mdp-overlay-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.mdp-overlay-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   12. 响应式（窗口最小 800×600，900–1600px 均需好看）
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  :root {
+    --mdp-toc-w: 220px;
+    --mdp-content-pad: 32px;
+  }
+}
+
+@media (max-width: 880px) {
+  :root { --mdp-content-pad: 24px; }
+
+  .mdp-statusbar { gap: 10px; }
+  .mdp-statusbar-filename { max-width: 200px; }
+}
+
+/* ==========================================================================
+   13. 动效偏好
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
