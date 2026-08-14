@@ -1,13 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>supermdp</title>
+    <title>SuperMDP · Markdown 预览器</title>
+    <script>
+        // 主题必须在首帧前设置，避免闪烁（design-spec §7.1）
+        (function () {
+            try {
+                var stored = localStorage.getItem('supermdp:theme');
+                var theme = (stored === 'light' || stored === 'dark')
+                    ? stored
+                    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
 </head>
 <body>
 <div id="root"></div>
 <script src="./src/main.tsx" type="module"></script>
 </body>
 </html>
-
