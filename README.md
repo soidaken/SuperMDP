@@ -1,4 +1,4 @@
-# SuperMDP — 只读 Markdown 预览器
+# 超级MD预览器（SuperMDP）— 只读 Markdown 预览器
 
 > 一个只做一件事的桌面 Markdown 预览器：打开 `.md` 文件，看到漂亮、专业的渲染结果。
 > **不编辑、不导出**——纯粹地读。
@@ -24,7 +24,7 @@
 cd app
 wails dev
 
-# 构建发行版（产出 app/build/bin/app.exe）
+# 构建发行版（产出 app/build/bin/superMDP.exe）
 wails build
 
 # 仅前端测试

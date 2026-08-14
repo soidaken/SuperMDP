@@ -17,7 +17,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "SuperMDP · Markdown 预览器",
+		Title:     "超级MD预览器",
 		Width:     1024,
 		Height:    768,
 		MinWidth:  800,

@@ -21,7 +21,7 @@ interface ToolbarProps {
 export function Toolbar(props: ToolbarProps) {
   return (
     <header className="mdp-toolbar">
-      <span className="mdp-appname">SuperMDP</span>
+      <span className="mdp-appname">超级MD预览器</span>
       <button type="button" className="mdp-btn mdp-btn-primary" onClick={props.onOpen}>
         <svg
           className="mdp-icon"
