@@ -380,26 +380,17 @@
 .mdp-content .footnotes ol { padding-left: 20px; }
 .mdp-content .footnotes li { margin: 0.35em 0; }
 
-/* ---------- 锚点（markdown-it-anchor，标题后 # 链接） ---------- */
+/* ---------- 锚点（markdown-it-anchor v9 headerLink 模式） ----------
+   headerLink 把标题全文包进锚点：<h1 id><a class="header-anchor">标题文字</a></h1>
+   因此锚点必须完全可见并继承标题排版；严禁 opacity:0 隐藏（会连标题一起隐藏）。 */
 
 .mdp-content .header-anchor {
-  margin-left: 8px;
-  font-size: 0.85em;
-  font-weight: 400;
-  color: var(--mdp-accent);
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
   text-decoration: none;
-  opacity: 0;
-  transition: opacity var(--mdp-duration-fast) var(--mdp-ease);
+  margin-left: 0;
 }
-
-.mdp-content h1:hover .header-anchor,
-.mdp-content h2:hover .header-anchor,
-.mdp-content h3:hover .header-anchor,
-.mdp-content h4:hover .header-anchor,
-.mdp-content h5:hover .header-anchor,
-.mdp-content h6:hover .header-anchor { opacity: 0.6; }
-
-.mdp-content .header-anchor:hover { opacity: 1; }
 
 /* ---------- KaTeX（数学公式，可开关） ---------- */
 

@@ -223,7 +223,7 @@
 
 - 结构：`.mdp-toc-title`（"目录"，11px、600、`uppercase`、`letter-spacing:.08em`、faint）→ 项列表。
 - 项 `.mdp-toc-item`：`display:block; padding:4px 18px; font-size:13px; color:fg-muted; border-left:2px solid transparent; white-space:nowrap; text-overflow:ellipsis`；hover→`fg + bg-hover`。
-- **激活项**：`color:accent; border-left-color:accent; background:accent-soft`（accent 左边条 = 激活态出场位）。
+- **激活项**：`color:fg; background:bg-active; border-left-color:accent`（2px accent 左条 = 激活态出场位；整行不做强调色，避免刺眼）
 - 嵌套层级用修饰类：`.lvl-1{ padding-left:18px } .lvl-2{32px} .lvl-3{46px} .lvl-4{60px} .lvl-5{74px} .lvl-6{88px}`（lvl-N 指标题级数 hN）。
 - 滚动跟随：高亮当前视口内标题对应项（交互见 §7.4）。
 
@@ -280,7 +280,7 @@
 | 脚注 | `.footnotes`：顶部 1px 边框 + `margin-top:40px` + 13px muted；`sup.footnote-ref a` accent |
 | KaTeX | `.katex{font-size:1.05em}`；`.katex-display{margin:24px 0; overflow-x:auto; overflow-y:hidden; padding:4px 0}`，内部 `white-space:nowrap` 保证长公式横向滚动 |
 | mermaid | `.mermaid{margin:24px 0; text-align:center; background:transparent}`；`svg{max-width:100%; height:auto}` |
-| 锚点链接 | `.header-anchor`：inline、accent、`opacity:0`，标题 hover 时 `opacity:.6`，自身 hover `1`，150ms |
+| 锚点链接 | headerLink 模式（markdown-it-anchor v9）：锚点包裹标题全文 `<h1 id><a class="header-anchor">标题文字</a></h1>`；`.header-anchor` 继承标题颜色/字号/字重、无下划线、`margin-left:0`，**完全可见**（严禁 opacity 隐藏，否则标题不可见） |
 
 ### 6.9 代码块结构与约束（头部由执行者实现 DOM，本项目只给配色与布局）
 
@@ -356,6 +356,7 @@
 
 **B. 排版**
 - [ ] 正文 15px、行高 1.75；标题字号阶梯清晰、h1/h2 有分隔线
+- [ ] **标题文字完整可见**（headerLink 锚点包裹全文且继承标题样式，非透明；无下划线）
 - [ ] 中文字体优先（雅黑/苹方），无网络字体请求（DevTools Network 无外部请求）
 - [ ] 行内 code 底色与正文和谐；选区色为 accent 淡色
 
@@ -398,6 +399,8 @@
 | D6 | **复选框自绘（appearance:none + data-URI 勾）** | `accent-color` 无法控制边框/圆角细节；自绘 15px 圆角复选框与整体 1.5px 边框语言一致 |
 | D7 | **表格斑马纹做成 `.zebra` 可选类** | 默认细边框 + 加粗表头已足够清晰，斑马纹留给大表格场景，避免默认样式过重 |
 | D8 | **代码块头部 DOM 约定为 `.mdp-code-header` / `.mdp-code-lang` / `.mdp-copy-btn`** | 头部按钮交互（复制、已复制态）归执行者，本项目只锁结构、配色与布局约束，防止实现发散 |
+| D9 | **标题锚点用 headerLink 包裹全文，且锚点完全可见** | markdown-it-anchor v9 的 headerLink 把标题文字整体包进 `.header-anchor`；若沿用"隐藏锚点、悬停显现"的旧模式会导致标题不可见（实测 bug）。因此锚点继承标题排版（颜色/字号/字重），无下划线、不透明；整行即链接 |
+| D10 | **TOC 激活项不做整行强调色** | 原方案（accent 文字 + accent-soft 底 + accent 左条）在明暗两主题下均显刺眼；改为中性 `bg-active` 底 + 主文本 + 2px accent 左条，accent 仅作指示器，观感更克制高级 |
 
 ## 10. 交付物与依赖
 
