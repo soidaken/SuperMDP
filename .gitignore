@@ -22,3 +22,10 @@ Thumbs.db
 
 # Agent teams state (harness)
 .agent-teams/
+
+# 图标源文件与产物（生成脚本 tools/gen_icon.py 可复现，需入库）
+!app/build/
+!app/build/windows/
+!app/build/appicon.svg
+!app/build/appicon.png
+!app/build/windows/icon.ico

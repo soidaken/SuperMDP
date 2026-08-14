@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- SuperMDP 应用图标源文件（SVG）
+       设计：黑色背景 + 2×2 四格 + 每格居中白色加粗大写字母 S / M / D / P
+       实际打包用 tools/gen_icon.py 生成的 PNG/ICO（与此 SVG 视觉一致）。 -->
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#000000"/>
+
+  <!-- 2×2 四格：间隔 8px，每格 244px，圆角 10，描边 #222222 -->
+  <g fill="#0a0a0a" stroke="#222222" stroke-width="2">
+    <rect x="8"   y="8"   width="244" height="244" rx="10"/>
+    <rect x="260" y="8"   width="244" height="244" rx="10"/>
+    <rect x="8"   y="260" width="244" height="244" rx="10"/>
+    <rect x="260" y="260" width="244" height="244" rx="10"/>
+  </g>
+
+  <!-- 白色加粗大写字母（Arial Bold，居中于各自格子） -->
+  <g fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="800" text-anchor="middle" dominant-baseline="central">
+    <text x="130" y="130">S</text>
+    <text x="382" y="130">M</text>
+    <text x="130" y="382">D</text>
+    <text x="382" y="382">P</text>
+  </g>
+</svg>
