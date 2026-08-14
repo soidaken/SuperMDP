@@ -18,8 +18,8 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:     "超级MD预览器",
-		Width:     1024,
-		Height:    768,
+		Width:     1280,
+		Height:    960,
 		MinWidth:  800,
 		MinHeight: 600,
 		AssetServer: &assetserver.Options{
