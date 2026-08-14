@@ -54,8 +54,10 @@
   --mdp-syn-addition: #286983;
   --mdp-syn-addition-bg: rgba(40, 105, 131, 0.12);
 
-  /* ---- 字体 ---- */
-  --mdp-font-sans: "Segoe UI", "Microsoft YaHei", "PingFang SC",
+  /* ---- 字体（中/英可被设置弹层覆盖：html 内联 --mdp-font-latin/--mdp-font-cjk） ---- */
+  --mdp-font-latin: "Segoe UI";
+  --mdp-font-cjk: "Microsoft YaHei";
+  --mdp-font-sans: var(--mdp-font-latin), var(--mdp-font-cjk), "PingFang SC",
                    "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
   --mdp-font-mono: "JetBrains Mono", Consolas, "Cascadia Mono",
                    "SF Mono", Menlo, monospace;
@@ -515,7 +517,7 @@ body {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 232px;
+  width: 272px;
   z-index: var(--mdp-z-popover);
   background: var(--mdp-bg-raised);
   border: 1px solid var(--mdp-border);
@@ -583,6 +585,51 @@ body {
   line-height: 1.55;
   color: var(--mdp-fg-muted);
   word-break: break-word;
+}
+
+/* 弹层内：字体设置（中/英文字体，系统字体列表 datalist 过滤） */
+
+.mdp-font-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 0;
+}
+
+.mdp-font-row .mdp-popover-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mdp-font-input {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: var(--mdp-font-size-sm);
+  color: var(--mdp-fg);
+  background: var(--mdp-bg-raised);
+  border: 1px solid var(--mdp-border);
+  border-radius: var(--mdp-radius-sm);
+  outline: none;
+  transition: border-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-font-input::placeholder { color: var(--mdp-fg-faint); }
+
+.mdp-font-input:focus { border-color: var(--mdp-accent); }
+
+.mdp-font-preview {
+  margin: 6px 0 2px;
+  padding: 8px 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 1px dashed var(--mdp-border);
+  border-radius: var(--mdp-radius-sm);
+  color: var(--mdp-fg);
+  user-select: none;
 }
 
 /* ---------- 开关 ---------- */

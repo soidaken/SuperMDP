@@ -13,7 +13,8 @@ import { useTheme } from './hooks/useTheme'
 import { useSettings } from './hooks/useSettings'
 import { useFile } from './hooks/useFile'
 import { isMarkdownPath } from './lib/format'
-import { GetStartupFile, RegisterAssociations } from '../wailsjs/go/main/App'
+import { applyFonts } from './lib/fonts'
+import { GetStartupFile, GetSystemFonts, RegisterAssociations } from '../wailsjs/go/main/App'
 import { BrowserOpenURL, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime'
 
 type RenderState = 'idle' | 'rendering' | 'done' | 'error'
@@ -36,6 +37,26 @@ export default function App() {
   const [renderMs, setRenderMs] = useState<number | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [registerMsg, setRegisterMsg] = useState<string | null>(null)
+  const [systemFonts, setSystemFonts] = useState<string[]>([])
+
+  /* ---------- 字体设置：加载系统字体列表 + 应用所选字体（中/英） ---------- */
+  useEffect(() => {
+    applyFonts(settings.fonts)
+  }, [settings.fonts])
+
+  useEffect(() => {
+    let cancelled = false
+    GetSystemFonts()
+      .then((fonts) => {
+        if (!cancelled) setSystemFonts(fonts)
+      })
+      .catch(() => {
+        /* 开发模式无 runtime 时忽略 */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const contentScrollRef = useRef<HTMLDivElement>(null)
   const contentBodyRef = useRef<HTMLDivElement>(null)
@@ -372,6 +393,7 @@ export default function App() {
             onClose={() => setPopoverOpen(false)}
             registerMsg={registerMsg}
             onRegisterDefault={() => void handleRegisterDefault()}
+            systemFonts={systemFonts}
           />
         }
       />

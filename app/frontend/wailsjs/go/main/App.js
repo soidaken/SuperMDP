@@ -10,6 +10,10 @@ export function GetStartupFile() {
   return window['go']['main']['App']['GetStartupFile']();
 }
 
+export function GetSystemFonts() {
+  return window['go']['main']['App']['GetSystemFonts']();
+}
+
 export function OpenFileDialog() {
   return window['go']['main']['App']['OpenFileDialog']();
 }

@@ -1,4 +1,5 @@
 import type { Settings } from '../lib/settings'
+import { previewFontFamily } from '../lib/fonts'
 
 interface SettingsPopoverProps {
   open: boolean
@@ -7,9 +8,12 @@ interface SettingsPopoverProps {
   onClose: () => void
   registerMsg: string | null
   onRegisterDefault: () => void
+  systemFonts: string[]
 }
 
-/** 设置弹层（design-spec §6.6）：KaTeX / mermaid 开关 + 文件关联，即时生效并持久化。 */
+const FONT_LIST_ID = 'mdp-system-fonts'
+
+/** 设置弹层（design-spec §6.6）：KaTeX / mermaid 开关 + 中英文字体 + 文件关联。 */
 export function SettingsPopover({
   open,
   settings,
@@ -17,9 +21,20 @@ export function SettingsPopover({
   onClose,
   registerMsg,
   onRegisterDefault,
+  systemFonts,
 }: SettingsPopoverProps) {
+  const setFont = (kind: 'latin' | 'cjk', value: string) => {
+    onUpdate({ fonts: { ...settings.fonts, [kind]: value.trim() || null } })
+  }
+
   return (
     <div className={`mdp-popover${open ? ' open' : ''}`} role="dialog" aria-label="渲染设置">
+      <datalist id={FONT_LIST_ID}>
+        {systemFonts.map((f) => (
+          <option key={f} value={f} />
+        ))}
+      </datalist>
+
       <p className="mdp-popover-title">渲染设置</p>
       <div className="mdp-popover-row">
         <span className="mdp-popover-label">
@@ -55,6 +70,45 @@ export function SettingsPopover({
           }}
         />
       </div>
+
+      <div className="mdp-popover-sep" />
+      <p className="mdp-popover-title">字体</p>
+      <div className="mdp-font-row">
+        <label className="mdp-popover-label" htmlFor="mdp-font-latin">
+          英文字体
+          <span className="mdp-popover-desc">输入名称筛选，留空用默认</span>
+        </label>
+        <input
+          id="mdp-font-latin"
+          className="mdp-font-input"
+          type="text"
+          list={FONT_LIST_ID}
+          placeholder="默认 (Segoe UI)"
+          value={settings.fonts.latin ?? ''}
+          onChange={(e) => setFont('latin', e.target.value)}
+          spellCheck={false}
+        />
+      </div>
+      <div className="mdp-font-row">
+        <label className="mdp-popover-label" htmlFor="mdp-font-cjk">
+          中文字体
+          <span className="mdp-popover-desc">输入名称筛选，留空用默认</span>
+        </label>
+        <input
+          id="mdp-font-cjk"
+          className="mdp-font-input"
+          type="text"
+          list={FONT_LIST_ID}
+          placeholder="默认 (Microsoft YaHei)"
+          value={settings.fonts.cjk ?? ''}
+          onChange={(e) => setFont('cjk', e.target.value)}
+          spellCheck={false}
+        />
+      </div>
+      <p className="mdp-font-preview" style={{ fontFamily: previewFontFamily(settings.fonts) }}>
+        The quick brown fox 0123 · 中文预览效果
+      </p>
+
       <div className="mdp-popover-sep" />
       <p className="mdp-popover-title">文件关联</p>
       <button type="button" className="mdp-btn mdp-btn-block" onClick={onRegisterDefault}>

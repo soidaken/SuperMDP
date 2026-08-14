@@ -245,9 +245,9 @@
 - 淡入淡出 200ms；隐藏态 `opacity:0; pointer-events:none`（class `.hidden`）。
 - 仅在拖拽文件悬停窗口时显示。
 
-### 6.6 设置弹层 `.mdp-popover`（KaTeX / mermaid 开关）
+### 6.6 设置弹层 `.mdp-popover`（KaTeX / mermaid 开关 + 字体 + 文件关联）
 
-- 锚点：设置钮外包 `.mdp-popover-anchor{position:relative}`；弹层 `position:absolute; top:calc(100% + 8px); right:0; width:232px; z-index:300`。
+- 锚点：设置钮外包 `.mdp-popover-anchor{position:relative}`；弹层 `position:absolute; top:calc(100% + 8px); right:0; width:272px; z-index:300`。
 - 外观：`bg-raised` + 1px 边框 + `shadow-md` + 圆角 6px，内边距 14px 16px。
 - 开关 `.mdp-switch`：34×20 胶囊，`bg:border-strong`，圆钮 16px 白底；`aria-checked="true"` 时 `bg:accent`、圆钮右移 14px，150ms 过渡。
 - 行：`.mdp-popover-row`（label 13px + 开关两端对齐）；标题 `.mdp-popover-title`（11px uppercase faint）。
@@ -318,6 +318,7 @@
 - 点设置钮开合 `.mdp-popover.open`；`Esc` 或点击弹层外部关闭。
 - 两个开关即时生效并持久化（可复用 `supermdp:settings` 存 `{katex:true, mermaid:true}`，key 由执行者定，写入 spec 附录后同步）。
 - 关闭 KaTeX/mermaid 时：对应渲染管线跳过、样式保留（隐藏元素）；无需重载文件。
+- **字体设置**：`supermdp:settings.fonts = {latin, cjk}`（字体名或 null=默认）。Go 端 `GetSystemFonts()` 用 GDI `EnumFontFamiliesExW` 枚举系统字体（去重、排序、过滤 `@` 竖排变体）供 datalist 过滤选择；应用时写入根元素内联变量 `--mdp-font-latin`/`--mdp-font-cjk`，`--mdp-font-sans` 通过 `var()` 引用即时生效；弹层内提供所见即所得预览行。
 
 ### 7.3 拖拽打开
 

@@ -6,6 +6,8 @@ export function GetFileInfo(arg1:string):Promise<main.FileInfo>;
 
 export function GetStartupFile():Promise<string>;
 
+export function GetSystemFonts():Promise<Array<string>>;
+
 export function OpenFileDialog():Promise<string>;
 
 export function ReadFile(arg1:string):Promise<main.ReadResult>;
