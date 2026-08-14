@@ -1,0 +1,431 @@
+/* ==========================================================================
+   SuperMDP — Markdown 正文排版主题 (markdown-theme.css)
+   只读 Markdown 预览器 · 作用域：全部规则收在 .mdp-content 下
+   依赖：ui.css 顶部的 --mdp-* 设计令牌（加载顺序 ui.css 在前）
+   覆盖：标题/正文/链接/列表/任务列表/引用/代码(hljs 配色)/表格/图片/
+         KaTeX / mermaid / 脚注 / 锚点 / 选区
+   ========================================================================== */
+
+/* ---------- 基础 ---------- */
+
+.mdp-content {
+  font-size: var(--mdp-font-size-base);
+  line-height: 1.75;
+  color: var(--mdp-fg);
+  word-break: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mdp-content > :first-child { margin-top: 0 !important; }
+.mdp-content > :last-child { margin-bottom: 0 !important; }
+
+/* ---------- 标题 ---------- */
+
+.mdp-content h1,
+.mdp-content h2,
+.mdp-content h3,
+.mdp-content h4,
+.mdp-content h5,
+.mdp-content h6 {
+  margin: 1.6em 0 0.7em;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--mdp-fg);
+  scroll-margin-top: 64px; /* 抵消工具栏高度，保证滚动跟随/锚点定位准确 */
+}
+
+.mdp-content h1 {
+  font-size: 1.85em;
+  margin-top: 0;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid var(--mdp-border);
+}
+
+.mdp-content h2 {
+  font-size: 1.5em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--mdp-border);
+}
+
+.mdp-content h3 { font-size: 1.25em; font-weight: 600; }
+.mdp-content h4 { font-size: 1.1em;  font-weight: 600; }
+.mdp-content h5 { font-size: 1em;    font-weight: 600; }
+.mdp-content h6 {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--mdp-fg-muted);
+}
+
+/* ---------- 段落与行内 ---------- */
+
+.mdp-content p { margin: 0 0 1em; }
+
+.mdp-content a {
+  color: var(--mdp-accent);
+  text-decoration: none;
+  transition: text-decoration-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-content a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+.mdp-content strong { font-weight: 700; }
+
+.mdp-content del { color: var(--mdp-fg-muted); }
+
+.mdp-content mark {
+  background: var(--mdp-accent-soft);
+  color: var(--mdp-fg);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* ---------- 分割线 ---------- */
+
+.mdp-content hr {
+  border: 0;
+  border-top: 1px solid var(--mdp-border);
+  margin: 2em auto;
+  width: 100%;
+}
+
+/* ---------- 列表 ---------- */
+
+.mdp-content ul,
+.mdp-content ol {
+  margin: 0 0 1em;
+  padding-left: 26px;
+}
+
+.mdp-content li { margin: 0.25em 0; }
+
+.mdp-content li > ul,
+.mdp-content li > ol { margin-bottom: 0; }
+
+/* 任务列表（markdown-it-task-lists） */
+.mdp-content ul.contains-task-list { padding-left: 2px; list-style: none; }
+
+.mdp-content li.task-list-item {
+  list-style: none;
+  margin: 0.35em 0;
+}
+
+.mdp-content input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  margin: 0 8px 0 0;
+  vertical-align: -2px;
+  border: 1.5px solid var(--mdp-border-strong);
+  border-radius: 4px;
+  background: var(--mdp-bg-raised);
+  position: relative;
+  transition: background-color var(--mdp-duration-fast) var(--mdp-ease),
+              border-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-content input[type="checkbox"]:checked {
+  background: var(--mdp-accent);
+  border-color: var(--mdp-accent);
+}
+
+.mdp-content input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E")
+    center / 10px 10px no-repeat;
+}
+
+/* disabled 复选框（只读预览）不降透明度 */
+.mdp-content input[type="checkbox"]:disabled { opacity: 1; }
+
+/* ---------- 引用块 ---------- */
+
+.mdp-content blockquote {
+  margin: 0 0 1em;
+  padding: 4px 16px;
+  border-left: 3px solid var(--mdp-border-strong);
+  background: var(--mdp-bg-sunken);
+  border-radius: 0 var(--mdp-radius-sm) var(--mdp-radius-sm) 0;
+  color: var(--mdp-fg-muted);
+}
+
+.mdp-content blockquote p:last-child { margin-bottom: 0; }
+
+.mdp-content blockquote blockquote { background: transparent; }
+
+/* ---------- 行内代码 ---------- */
+
+.mdp-content code {
+  font-family: var(--mdp-font-mono);
+  font-size: 0.875em;
+  background: var(--mdp-inline-code-bg);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+}
+
+/* ---------- 代码块 ---------- */
+
+.mdp-content pre {
+  margin: 0 0 1.25em;
+  border: 1px solid var(--mdp-border);
+  border-radius: var(--mdp-radius-md);
+  background: var(--mdp-code-bg);
+  overflow: hidden; /* 头部圆角裁剪；代码自身横向滚动 */
+}
+
+.mdp-content pre code {
+  display: block;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  background: transparent;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 代码块头部（DOM 由执行者生成：.mdp-code-header > .mdp-code-lang + .mdp-copy-btn） */
+.mdp-content .mdp-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 34px;
+  padding: 0 12px;
+  background: var(--mdp-bg-raised);
+  border-bottom: 1px solid var(--mdp-border);
+  font-size: var(--mdp-font-size-xs);
+  color: var(--mdp-fg-muted);
+}
+
+.mdp-content .mdp-code-lang {
+  font-family: var(--mdp-font-mono);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.mdp-content .mdp-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: var(--mdp-font-size-xs);
+  color: var(--mdp-fg-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color var(--mdp-duration-fast) var(--mdp-ease),
+              color var(--mdp-duration-fast) var(--mdp-ease),
+              border-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-content .mdp-copy-btn:hover {
+  background: var(--mdp-bg-hover);
+  color: var(--mdp-fg);
+  border-color: var(--mdp-border);
+}
+
+.mdp-content .mdp-copy-btn.copied {
+  color: var(--mdp-syn-addition);
+  border-color: var(--mdp-syn-addition);
+}
+
+/* 无语言标签的裸 pre：去掉头部圆角影响 */
+.mdp-content pre:not(.mdp-code-block) > code { padding: 16px; }
+
+/* ---------- hljs 语法高亮配色（自写，挂 --mdp-syn-* 令牌，随主题切换） ---------- */
+
+.mdp-content .hljs-comment,
+.mdp-content .hljs-quote {
+  color: var(--mdp-syn-comment);
+  font-style: italic;
+}
+
+.mdp-content .hljs-keyword,
+.mdp-content .hljs-selector-tag,
+.mdp-content .hljs-type,
+.mdp-content .hljs-meta .hljs-keyword {
+  color: var(--mdp-syn-keyword);
+}
+
+.mdp-content .hljs-string,
+.mdp-content .hljs-regexp,
+.mdp-content .hljs-attribute,
+.mdp-content .hljs-addition {
+  color: var(--mdp-syn-string);
+}
+
+.mdp-content .hljs-number,
+.mdp-content .hljs-literal,
+.mdp-content .hljs-symbol,
+.mdp-content .hljs-bullet {
+  color: var(--mdp-syn-number);
+}
+
+.mdp-content .hljs-title,
+.mdp-content .hljs-title.function_,
+.mdp-content .hljs-section,
+.mdp-content .hljs-name {
+  color: var(--mdp-syn-title);
+}
+
+.mdp-content .hljs-built_in,
+.mdp-content .hljs-builtin-name {
+  color: var(--mdp-syn-builtin);
+}
+
+.mdp-content .hljs-attr,
+.mdp-content .hljs-variable,
+.mdp-content .hljs-template-variable,
+.mdp-content .hljs-selector-attr,
+.mdp-content .hljs-selector-class,
+.mdp-content .hljs-selector-id {
+  color: var(--mdp-syn-attr);
+}
+
+.mdp-content .hljs-params { color: var(--mdp-syn-params); }
+
+.mdp-content .hljs-meta { color: var(--mdp-syn-meta); font-weight: 600; }
+
+.mdp-content .hljs-deletion {
+  color: var(--mdp-syn-deletion);
+  background: var(--mdp-syn-deletion-bg);
+  border-radius: 3px;
+}
+
+.mdp-content .hljs-addition {
+  background: var(--mdp-syn-addition-bg);
+  border-radius: 3px;
+}
+
+.mdp-content .hljs-emphasis { font-style: italic; }
+.mdp-content .hljs-strong { font-weight: 700; }
+
+/* ---------- 表格 ---------- */
+
+.mdp-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.25em;
+  font-size: 0.9375em;
+}
+
+.mdp-content th,
+.mdp-content td {
+  border: 1px solid var(--mdp-border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.mdp-content th {
+  font-weight: 600;
+  background: var(--mdp-bg-sunken);
+}
+
+/* 斑马纹：可选，需在 table 上加 .zebra 类 */
+.mdp-content table.zebra tbody tr:nth-child(even) td {
+  background: var(--mdp-bg-hover);
+}
+
+/* ---------- 图片 ---------- */
+
+.mdp-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5em auto;
+  border: 1px solid var(--mdp-border);
+  border-radius: 4px;
+}
+
+/* ---------- 快捷键键帽（正文内） ---------- */
+
+.mdp-content kbd {
+  font-family: var(--mdp-font-mono);
+  font-size: 0.85em;
+  color: var(--mdp-kbd-fg);
+  background: var(--mdp-kbd-bg);
+  border: 1px solid var(--mdp-kbd-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  box-shadow: 0 1px 0 var(--mdp-kbd-border);
+}
+
+/* ---------- 脚注（markdown-it-footnote） ---------- */
+
+.mdp-content sup.footnote-ref a {
+  font-size: 0.8em;
+  color: var(--mdp-accent);
+  text-decoration: none;
+}
+
+.mdp-content .footnotes {
+  margin-top: 2.5em;
+  padding-top: 1em;
+  border-top: 1px solid var(--mdp-border);
+  font-size: var(--mdp-font-size-sm);
+  color: var(--mdp-fg-muted);
+}
+
+.mdp-content .footnotes ol { padding-left: 20px; }
+.mdp-content .footnotes li { margin: 0.35em 0; }
+
+/* ---------- 锚点（markdown-it-anchor，标题后 # 链接） ---------- */
+
+.mdp-content .header-anchor {
+  margin-left: 8px;
+  font-size: 0.85em;
+  font-weight: 400;
+  color: var(--mdp-accent);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-content h1:hover .header-anchor,
+.mdp-content h2:hover .header-anchor,
+.mdp-content h3:hover .header-anchor,
+.mdp-content h4:hover .header-anchor,
+.mdp-content h5:hover .header-anchor,
+.mdp-content h6:hover .header-anchor { opacity: 0.6; }
+
+.mdp-content .header-anchor:hover { opacity: 1; }
+
+/* ---------- KaTeX（数学公式，可开关） ---------- */
+
+.mdp-content .katex { font-size: 1.05em; }
+
+.mdp-content .katex-display {
+  margin: 1.5em 0;
+  padding: 4px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 长公式不换行，在容器内横向滚动 */
+.mdp-content .katex-display > .katex { white-space: nowrap; }
+
+/* ---------- mermaid（图表，可开关） ---------- */
+
+.mdp-content .mermaid {
+  margin: 1.5em 0;
+  text-align: center;
+  background: transparent;
+}
+
+.mdp-content .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- 选区 ---------- */
+
+.mdp-content ::selection { background: var(--mdp-selection); }

@@ -1,0 +1,15 @@
+/* ==========================================================================
+   SuperMDP — 应用侧微调 (overrides.css)
+   仅补充设计成品 ui.css 未定义的交互态，不覆盖任何设计令牌/样式。
+   ========================================================================== */
+
+/* 图标按钮禁用态（ui.css 未定义） */
+.mdp-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.mdp-icon-btn:disabled:hover {
+  background: transparent;
+  color: var(--mdp-fg-muted);
+}
