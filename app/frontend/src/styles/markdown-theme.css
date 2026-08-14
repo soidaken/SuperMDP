@@ -74,7 +74,9 @@
 
 .mdp-content strong { font-weight: 700; }
 
-.mdp-content del { color: var(--mdp-fg-muted); }
+/* 删除线：markdown-it v15 输出 <s>（非 <del>），两者同款 muted 样式 */
+.mdp-content del,
+.mdp-content s { color: var(--mdp-fg-muted); }
 
 .mdp-content mark {
   background: var(--mdp-accent-soft);
