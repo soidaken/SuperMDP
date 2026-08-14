@@ -1,24 +1,7 @@
-import MarkdownIt from 'markdown-it'
-import anchor from 'markdown-it-anchor'
-import taskLists from 'markdown-it-task-lists'
-import footnote from 'markdown-it-footnote'
-import texmath from 'markdown-it-texmath'
-import hljs from 'highlight.js/lib/common'
-import katex from 'katex'
+import { createMd, escapeHtml, slugify, type Heading, type RenderOptions } from './md-factory'
 import { sanitizeBody } from './sanitize'
 
-export interface RenderOptions {
-  /** 启用 KaTeX（$...$ / $$...$$）。关闭时公式按原文显示。 */
-  katex: boolean
-  /** 启用 mermaid 图表。关闭时图表按代码块显示。 */
-  mermaid: boolean
-}
-
-export interface Heading {
-  level: number
-  id: string
-  text: string
-}
+export type { Heading, RenderOptions }
 
 export interface RenderResult {
   /** 已清洗、已增强（代码块头部）的 HTML 字符串 */
@@ -31,74 +14,21 @@ export interface RenderResult {
   renderMs: number
 }
 
-/** GitHub 风格 slug：小写、空白转连字符、保留 CJK 与字母数字。 */
-function slugify(s: string): string {
-  const slug = s
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\p{L}\p{N}\-_]/gu, '')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-  return slug || 'section'
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
-// markdown-it v15 的 default 导出为 class+namespace 合并，实例类型请用推断
-function createMd(withKatex: boolean) {
-  const instance = new MarkdownIt({
-    html: true, // 放行原始 HTML，由 DOMPurify 在渲染后兜底清洗
-    linkify: true,
-    breaks: false, // 遵循 CommonMark：行尾两空格才软换行
-    highlight(code: string, lang: string): string {
-      // highlight 返回的内容会被 markdown-it 包进 <pre><code>，
-      // 代码块头部（语言标签 + 复制按钮）在 enhanceCodeBlocks 中统一生成。
-      if (lang && hljs.getLanguage(lang)) {
-        try {
-          return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value
-        } catch {
-          // 高亮失败按纯文本处理
-        }
-      }
-      return instance.utils.escapeHtml(code)
-    },
-  })
-
-  instance.use(anchor, {
-    level: [1, 2, 3, 4, 5, 6],
-    slugify,
-    tabIndex: false,
-    permalink: anchor.permalink.headerLink({
-      symbol: '#',
-      safariReaderFix: true,
-    }),
-  })
-
-  // enabled:false → 复选框带 disabled=""（只读预览不可交互，spec §6.8）
-  instance.use(taskLists, { enabled: false, label: false })
-
-  instance.use(footnote)
-
-  if (withKatex) {
-    instance.use(texmath, {
-      engine: katex,
-      delimiters: 'dollars',
-      katexOptions: { throwOnError: false, strict: false },
-    })
-  }
-  return instance
+/** 单块渲染结果（分段渲染管线用）。 */
+export interface ChunkResult {
+  html: string
+  headings: Heading[]
+  wordCount: number
 }
 
 // 两个实例：KaTeX 开/关。设置开关即时生效无需重建（渲染时按 opts 选择）。
 const mdWithKatex = createMd(true)
 const mdWithoutKatex = createMd(false)
+
+/** 纯字符串渲染（无 DOM）：markdown-it 一次 render。Worker 内等同逻辑见 render.worker.ts。 */
+export function renderRaw(src: string, opts: RenderOptions): string {
+  return (opts.katex ? mdWithKatex : mdWithoutKatex).render(src)
+}
 
 /**
  * 把 markdown-it 输出的裸 <pre><code> 增强为 spec §6.9 约定的结构：
@@ -139,20 +69,57 @@ function enhanceCodeBlocks(root: HTMLElement, mermaidEnabled: boolean): void {
 }
 
 /** 从清洗后的正文 DOM 提取标题（去掉锚点符号）。 */
+function headingText(el: Element): string {
+  // headerLink（v9）把标题文字包在 .header-anchor 内（safariReaderFix 再包一层
+  // <span>），取锚内文本并去掉可能的 "#" 符号，避免把符号算进目录文字。
+  const anchor = el.querySelector(':scope > .header-anchor')
+  let text = ((anchor?.textContent ?? el.textContent) || '').trim()
+  return text.replace(/^#?\s*/, '').replace(/\s*#\s*$/, '').trim()
+}
+
 function extractHeadings(root: HTMLElement): Heading[] {
   const headings: Heading[] = []
   root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((el) => {
     const id = el.getAttribute('id')
     if (!id) return
-    // headerLink（v9）把标题文字包在 .header-anchor 内（safariReaderFix 再包一层
-    // <span>），取锚内文本并去掉可能的 "#" 符号，避免把符号算进目录文字。
-    const anchor = el.querySelector(':scope > .header-anchor')
-    let text = ((anchor?.textContent ?? el.textContent) || '').trim()
-    text = text.replace(/^#?\s*/, '').replace(/\s*#\s*$/, '').trim()
+    const text = headingText(el)
     if (!text) return
     headings.push({ level: Number(el.tagName.slice(1)), id, text })
   })
   return headings
+}
+
+/** 跨块全局标题 id 状态（P1-1 分块渲染）：每块只见到块内标题，重复文本的
+ *  "章节-1/章节-2" 后缀必须跨块计数，否则 TOC 锚点跨块冲突。 */
+export interface HeadingIdState {
+  counts: Map<string, number>
+  used: Set<string>
+}
+
+export function newHeadingIdState(): HeadingIdState {
+  return { counts: new Map(), used: new Set() }
+}
+
+/**
+ * 按文档顺序为标题分配全局唯一 id（含 .header-anchor href）。
+ * 编号方案与 markdown-it-anchor 的 uniqueSlug 一致（base、base-1、base-2…，
+ * 遇冲突跳过），因此对全量渲染是幂等 no-op，对分块渲染消除跨块重复 id。
+ */
+function assignHeadingIds(root: HTMLElement, state: HeadingIdState): void {
+  root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((el) => {
+    const base = slugify(headingText(el))
+    let n = state.counts.get(base) ?? 0
+    let id = n === 0 ? base : `${base}-${n}`
+    while (state.used.has(id)) {
+      n++
+      id = `${base}-${n}`
+    }
+    state.used.add(id)
+    state.counts.set(base, n + 1)
+    el.setAttribute('id', id)
+    const a = el.querySelector(':scope > .header-anchor')
+    if (a) a.setAttribute('href', `#${id}`)
+  })
 }
 
 /** 统计字数：CJK 字符数 + 拉丁词数。 */
@@ -164,24 +131,37 @@ export function countWords(src: string): number {
 }
 
 /**
- * 渲染管线：markdown-it → DOMPurify 清洗 → 代码块增强 → 提取 TOC/字数。
- * 纯字符串/内存操作（除内部一个临时 detached DOM 用于增强），
- * 返回的 html 由 React 以 dangerouslySetInnerHTML 插入。
+ * 处理一块 markdown-it 原始输出：DOMPurify 清洗 → 代码块增强 → 标题 id 归一化
+ * → TOC/字数提取。供分段渲染管线（chunk.ts）逐块调用；单块 DOM 极小，主线程
+ * 开销可控。idState 跨块共享以保证全局唯一标题 id。
  */
-export function renderMarkdown(src: string, opts: RenderOptions): RenderResult {
-  const start = performance.now()
-  const md = opts.katex ? mdWithKatex : mdWithoutKatex
-  const rawHtml = md.render(src)
+export function processChunk(
+  rawHtml: string,
+  chunkSrc: string,
+  opts: RenderOptions,
+  idState: HeadingIdState = newHeadingIdState(),
+): ChunkResult {
   const cleanHtml = sanitizeBody(rawHtml)
-
   // 临时容器做 DOM 级增强（不入主文档，零布局影响）
   const tmp = document.createElement('div')
   tmp.innerHTML = cleanHtml
   enhanceCodeBlocks(tmp, opts.mermaid)
-  const html = tmp.innerHTML
+  assignHeadingIds(tmp, idState)
+  return {
+    html: tmp.innerHTML,
+    headings: extractHeadings(tmp),
+    wordCount: countWords(chunkSrc),
+  }
+}
 
-  const headings = extractHeadings(tmp)
-  const wordCount = countWords(src)
+/**
+ * 渲染管线（同步全量）：markdown-it → DOMPurify 清洗 → 代码块增强 → 提取 TOC/字数。
+ * 与分段管线（chunk.ts）结果一致，供测试与降级路径使用。
+ */
+export function renderMarkdown(src: string, opts: RenderOptions): RenderResult {
+  const start = performance.now()
+  const rawHtml = renderRaw(src, opts)
+  const { html, headings, wordCount } = processChunk(rawHtml, src, opts)
   const renderMs = Math.round(performance.now() - start)
   return { html, headings, wordCount, renderMs }
 }

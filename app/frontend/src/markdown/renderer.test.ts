@@ -222,3 +222,23 @@ describe('性能探针（jsdom 解析远慢于真实 WebView2，仅防病态回�
     },
   )
 })
+
+describe('P2-3 hljs 语言补全：dockerfile / powershell', () => {
+  it('registerLanguage 后两门语言命中且渲染有高亮', async () => {
+    const hljs = (await import('highlight.js/lib/common')).default
+    expect(hljs.getLanguage('dockerfile')).toBeTruthy()
+    expect(hljs.getLanguage('powershell')).toBeTruthy()
+
+    const r = render(
+      '```dockerfile\nFROM node:20\nRUN npm ci\n```\n\n```powershell\nWrite-Host "hello"\nGet-Process\n```',
+      { mermaid: false },
+    )
+    const doc = toDom(r.html)
+    const docker = doc.querySelector('code.language-dockerfile')
+    expect(docker).not.toBeNull()
+    expect(docker!.querySelector('.hljs-keyword, .hljs-section, .hljs-string')).not.toBeNull()
+    const ps = doc.querySelector('code.language-powershell')
+    expect(ps).not.toBeNull()
+    expect(ps!.querySelector('.hljs-keyword, .hljs-built_in, .hljs-string, .hljs-title')).not.toBeNull()
+  })
+})
