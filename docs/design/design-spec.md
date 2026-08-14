@@ -39,87 +39,89 @@
 
 > 唯一来源：`ui.css` 顶部。`markdown-theme.css` 依赖这些令牌，**加载顺序 ui.css 在前**。
 
-### 4.1 色板 — Light（`:root`）
+### 4.1 色板 — Light（`:root`，Rosé Pine Dawn）
+
+> 主题参考：[Rosé Pine](https://github.com/rose-pine)（开源顶级主题，暖纸白底 + 玫瑰/鸢尾点缀，muted 高级感）。
 
 | 令牌 | 值 | 用途 |
 |---|---|---|
-| `--mdp-bg` | `#f7f8fa` | 应用底色（工具栏/目录/阅读区/状态栏） |
-| `--mdp-bg-raised` | `#ffffff` | 浮起面：弹层、代码块头部 |
-| `--mdp-bg-hover` | `#eef1f5` | 悬停态底色 |
-| `--mdp-bg-active` | `#e4e9f0` | 按下态底色 |
-| `--mdp-bg-sunken` | `#f1f3f6` | 凹陷面：表头、引用块底 |
-| `--mdp-code-bg` | `#f2f4f7` | 代码块底色 |
-| `--mdp-inline-code-bg` | `#eceff3` | 行内代码底色 |
-| `--mdp-border` | `#e3e6eb` | 1px 细边框 |
-| `--mdp-border-strong` | `#cfd5dd` | 强调边框（引用块、复选框） |
-| `--mdp-fg` | `#1f2430` | 主文本 |
-| `--mdp-fg-muted` | `#5b6472` | 次级文本 |
-| `--mdp-fg-faint` | `#8b94a3` | 三级文本（占位、非激活目录项） |
-| `--mdp-accent` | `#2563eb` | 强调色（链接/激活态/主按钮） |
-| `--mdp-accent-hover` | `#1d4ed8` | 强调色悬停 |
-| `--mdp-accent-soft` | `rgba(37, 99, 235, 0.10)` | 强调色淡底（激活项背景） |
-| `--mdp-accent-contrast` | `#ffffff` | 强调色上的文字 |
-| `--mdp-selection` | `rgba(37, 99, 235, 0.20)` | 文本选区 |
-| `--mdp-scrollbar` | `#c9cfd8` | 滚动条 |
-| `--mdp-scrollbar-hover` | `#aab2bf` | 滚动条悬停 |
-| `--mdp-kbd-bg` | `#f1f3f6` | 快捷键键帽底 |
-| `--mdp-kbd-border` | `#d4d9e0` | 键帽描边 |
-| `--mdp-kbd-fg` | `#4b5563` | 键帽文字 |
-| `--mdp-overlay-bg` | `rgba(15, 17, 21, 0.45)` | 拖拽遮罩半透明底 |
-| `--mdp-overlay-border` | `rgba(255, 255, 255, 0.85)` | 拖拽遮罩虚线框 |
-| `--mdp-overlay-fg` | `#ffffff` | 拖拽遮罩文字 |
-| `--mdp-danger` | `#d1242f` | 错误/删除语义色（极少用） |
+| `--mdp-bg` | `#faf4ed` | 应用底色（暖纸白） |
+| `--mdp-bg-raised` | `#fffaf3` | 浮起面：弹层、代码块头部 |
+| `--mdp-bg-hover` | `#f4ede8` | 悬停态底色 |
+| `--mdp-bg-active` | `#dfdad9` | 按下态底色 |
+| `--mdp-bg-sunken` | `#f2e9e1` | 凹陷面：表头、引用块底 |
+| `--mdp-code-bg` | `#f4ede8` | 代码块底色 |
+| `--mdp-inline-code-bg` | `#f2e9e1` | 行内代码底色 |
+| `--mdp-border` | `#e5ddd5` | 1px 细边框 |
+| `--mdp-border-strong` | `#cecacd` | 强调边框（引用块、复选框） |
+| `--mdp-fg` | `#575279` | 主文本（暖紫灰） |
+| `--mdp-fg-muted` | `#797593` | 次级文本 |
+| `--mdp-fg-faint` | `#9893a5` | 三级文本（占位、非激活目录项） |
+| `--mdp-accent` | `#b4637a` | 强调色 love（链接/激活态/主按钮） |
+| `--mdp-accent-hover` | `#9c4f66` | 强调色悬停 |
+| `--mdp-accent-soft` | `rgba(180, 99, 122, 0.10)` | 强调色淡底（激活项背景） |
+| `--mdp-accent-contrast` | `#fffaf3` | 强调色上的文字 |
+| `--mdp-selection` | `rgba(180, 99, 122, 0.22)` | 文本选区 |
+| `--mdp-scrollbar` | `#d8cfc5` | 滚动条 |
+| `--mdp-scrollbar-hover` | `#b9aea2` | 滚动条悬停 |
+| `--mdp-kbd-bg` | `#f2e9e1` | 快捷键键帽底 |
+| `--mdp-kbd-border` | `#e0d7cd` | 键帽描边 |
+| `--mdp-kbd-fg` | `#797593` | 键帽文字 |
+| `--mdp-overlay-bg` | `rgba(25, 23, 36, 0.45)` | 拖拽遮罩半透明底 |
+| `--mdp-overlay-border` | `rgba(255, 250, 243, 0.85)` | 拖拽遮罩虚线框 |
+| `--mdp-overlay-fg` | `#fffaf3` | 拖拽遮罩文字 |
+| `--mdp-danger` | `#b4637a` | 错误/删除语义色（极少用） |
 
-### 4.2 色板 — Dark（`[data-theme="dark"]`）
+### 4.2 色板 — Dark（`[data-theme="dark"]`，Rosé Pine main）
 
-> 基调：低饱和深灰蓝底（`#0f1115`），**避免纯黑**；亮色面比底色略亮，用边框分层而非阴影。
+> 基调：柔和紫黑（`#191724`），**非纯黑**；亮色面比底色略亮，用边框分层而非阴影。
 
 | 令牌 | 值 | 用途 |
 |---|---|---|
-| `--mdp-bg` | `#0f1115` | 应用底色 |
-| `--mdp-bg-raised` | `#151a21` | 浮起面 |
-| `--mdp-bg-hover` | `#1a2029` | 悬停态 |
-| `--mdp-bg-active` | `#212936` | 按下态 |
-| `--mdp-bg-sunken` | `#0b0d10` | 凹陷面 |
-| `--mdp-code-bg` | `#14181f` | 代码块底色 |
-| `--mdp-inline-code-bg` | `#1c222c` | 行内代码底 |
-| `--mdp-border` | `#232a35` | 细边框 |
-| `--mdp-border-strong` | `#363f4d` | 强调边框 |
-| `--mdp-fg` | `#e7eaf0` | 主文本 |
-| `--mdp-fg-muted` | `#9aa3b2` | 次级文本 |
-| `--mdp-fg-faint` | `#667085` | 三级文本 |
-| `--mdp-accent` | `#6ea8fe` | 强调色（亮蓝，暗底可读） |
-| `--mdp-accent-hover` | `#93c5fd` | 强调色悬停 |
-| `--mdp-accent-soft` | `rgba(110, 168, 254, 0.14)` | 强调色淡底 |
-| `--mdp-accent-contrast` | `#0d1117` | 强调色上的文字（暗色按钮用深字，对比度更佳） |
-| `--mdp-selection` | `rgba(110, 168, 254, 0.30)` | 文本选区 |
-| `--mdp-scrollbar` | `#2c3442` | 滚动条 |
-| `--mdp-scrollbar-hover` | `#3e4a5c` | 滚动条悬停 |
-| `--mdp-kbd-bg` | `#1a2029` | 键帽底 |
-| `--mdp-kbd-border` | `#2e3745` | 键帽描边 |
-| `--mdp-kbd-fg` | `#b8c2d0` | 键帽文字 |
-| `--mdp-overlay-bg` | `rgba(10, 12, 16, 0.55)` | 拖拽遮罩底 |
-| `--mdp-overlay-border` | `rgba(255, 255, 255, 0.80)` | 虚线框 |
-| `--mdp-overlay-fg` | `#ffffff` | 遮罩文字 |
-| `--mdp-danger` | `#f87171` | 错误/删除语义色 |
+| `--mdp-bg` | `#191724` | 应用底色 |
+| `--mdp-bg-raised` | `#1f1d2e` | 浮起面 |
+| `--mdp-bg-hover` | `#21202e` | 悬停态 |
+| `--mdp-bg-active` | `#403d52` | 按下态 |
+| `--mdp-bg-sunken` | `#131120` | 凹陷面 |
+| `--mdp-code-bg` | `#1f1d2e` | 代码块底色 |
+| `--mdp-inline-code-bg` | `#26233a` | 行内代码底 |
+| `--mdp-border` | `#2d2a3f` | 细边框 |
+| `--mdp-border-strong` | `#403d52` | 强调边框 |
+| `--mdp-fg` | `#e0def4` | 主文本 |
+| `--mdp-fg-muted` | `#908caa` | 次级文本 |
+| `--mdp-fg-faint` | `#6e6a86` | 三级文本 |
+| `--mdp-accent` | `#ebbcba` | 强调色 rose（亮玫瑰，暗底可读） |
+| `--mdp-accent-hover` | `#f3cfcd` | 强调色悬停 |
+| `--mdp-accent-soft` | `rgba(235, 188, 186, 0.12)` | 强调色淡底 |
+| `--mdp-accent-contrast` | `#191724` | 强调色上的文字（亮 accent 按钮用深字，对比度更佳） |
+| `--mdp-selection` | `rgba(235, 188, 186, 0.25)` | 文本选区 |
+| `--mdp-scrollbar` | `#2d2a3f` | 滚动条 |
+| `--mdp-scrollbar-hover` | `#403d52` | 滚动条悬停 |
+| `--mdp-kbd-bg` | `#21202e` | 键帽底 |
+| `--mdp-kbd-border` | `#403d52` | 键帽描边 |
+| `--mdp-kbd-fg` | `#908caa` | 键帽文字 |
+| `--mdp-overlay-bg` | `rgba(12, 11, 18, 0.55)` | 拖拽遮罩底 |
+| `--mdp-overlay-border` | `rgba(224, 222, 244, 0.85)` | 虚线框 |
+| `--mdp-overlay-fg` | `#e0def4` | 遮罩文字 |
+| `--mdp-danger` | `#eb6f92` | 错误/删除语义色 |
 
 ### 4.3 语法高亮色（hljs，`--mdp-syn-*`）
 
-> 自写配色，与整体色板同族（函数/标题用 accent 蓝，注释用灰，字符串用绿，数字用琥珀，关键字用紫）。选择器见 `markdown-theme.css` §代码块。
+> 自写配色（Rosé Pine 语法色），与整体色板同族（标题/函数用 rose，关键字用 love，字符串用 pine/foam，数字用 gold，内建用 iris，注释用 muted）。选择器见 `markdown-theme.css` §代码块。
 
 | 令牌 | Light | Dark | 作用于 |
 |---|---|---|---|
-| `--mdp-syn-comment` | `#7d8590` | `#667085` | comment, quote（斜体） |
-| `--mdp-syn-keyword` | `#7c3aed` | `#a78bfa` | keyword, selector-tag, type, meta.keyword |
-| `--mdp-syn-string` | `#1a7f37` | `#6ee7b7` | string, regexp, addition, attribute |
-| `--mdp-syn-number` | `#b45309` | `#fbbf24` | number, literal, symbol, bullet |
-| `--mdp-syn-title` | `#2563eb` | `#6ea8fe` | title, title.function_, section, name |
-| `--mdp-syn-builtin` | `#0891b2` | `#22d3ee` | built_in, builtin-name |
-| `--mdp-syn-attr` | `#0f766e` | `#5eead4` | attr, variable, template-variable, selector-class/id/attr |
-| `--mdp-syn-params` | `#374151` | `#cbd5e1` | params（正文色系） |
-| `--mdp-syn-meta` | `#6b7280` | `#94a3b8` | meta（加粗） |
-| `--mdp-syn-deletion` | `#d1242f` + `rgba(209,36,47,.10)` 底 | `#f87171` + `rgba(248,113,113,.14)` 底 | deletion |
-| `--mdp-syn-addition` | `#1a7f37` + `rgba(26,127,55,.10)` 底 | `#4ade80` + `rgba(74,222,128,.14)` 底 | addition |
+| `--mdp-syn-comment` | `#9893a5` | `#6e6a86` | comment, quote（斜体） |
+| `--mdp-syn-keyword` | `#b4637a` | `#eb6f92` | keyword, selector-tag, type, meta.keyword |
+| `--mdp-syn-string` | `#286983` | `#9ccfd8` | string, regexp, addition, attribute |
+| `--mdp-syn-number` | `#ea9d34` | `#f6c177` | number, literal, symbol, bullet |
+| `--mdp-syn-title` | `#d7827e` | `#ebbcba` | title, title.function_, section, name |
+| `--mdp-syn-builtin` | `#907aa9` | `#c4a7e7` | built_in, builtin-name |
+| `--mdp-syn-attr` | `#56949f` | `#9ccfd8` | attr, variable, template-variable, selector-class/id/attr |
+| `--mdp-syn-params` | `#797593` | `#908caa` | params（正文色系） |
+| `--mdp-syn-meta` | `#9893a5` | `#6e6a86` | meta（加粗） |
+| `--mdp-syn-deletion` | `#b4637a` + `rgba(180,99,122,.10)` 底 | `#eb6f92` + `rgba(235,111,146,.12)` 底 | deletion |
+| `--mdp-syn-addition` | `#286983` + `rgba(40,105,131,.12)` 底 | `#9ccfd8` + `rgba(156,207,216,.12)` 底 | addition |
 
 ### 4.4 字体与字号
 
@@ -350,8 +352,8 @@
 
 **A. 主题与整体**
 - [ ] light/dark 切换即时、无闪烁；重启后记住选择；**首次启动默认浅色（不跟随系统）**
-- [ ] dark 底色为低饱和深灰蓝（≈`#0f1115`），**非纯黑**；无渐变、无发光
-- [ ] accent 只出现在：链接、激活态（目录项/图标钮）、主按钮
+- [ ] dark 底色为柔和紫黑（≈`#191724`），**非纯黑**；无渐变、无发光
+- [ ] accent（玫瑰色）只出现在：链接、激活态（目录项/图标钮）、主按钮
 - [ ] 全界面过渡 150–200ms，无多余动画
 
 **B. 排版**
@@ -391,16 +393,17 @@
 
 | # | 决策 | 理由 |
 |---|---|---|
-| D1 | **强调色选靛蓝**：light `#2563eb` / dark `#6ea8fe` | 单一强调色需要"高级且稳妥"：靛蓝在 Windows/WebView2 语境中接近原生观感，对白/深底对比度均达标（≥4.5:1），且与中性灰蓝背景天然协调；不使用品牌红/绿，避免喧宾夺主 |
+| D1 | **强调色选玫瑰（Rosé Pine love/rose）**：light `#b4637a` / dark `#ebbcba` | 单一强调色需要"高级且稳妥"：玫瑰色系低饱和、有温度，明暗两套对比度均达标（≥4.5:1），与暖纸白/紫黑底色天然协调；弃用靛蓝（见 D11） |
 | D2 | **正文排版作用域收在 `.mdp-content` 下**（如 `.mdp-content h1`） | 桌面应用 DOM 全局共享，裸 `h1` 会污染弹层/空状态；"裸标签选择器"指不引入 .mdp- 类、以标签为选择器，作用域化是工程必需 |
-| D3 | **dark 底 `#0f1115`（低饱和深灰蓝）** | 避免纯黑 OLED 过冲感与"廉价"印象；灰蓝与 accent 蓝同族，暗面分层靠 1px 边框而非阴影 |
-| D4 | **dark 主按钮文字用深色 `#0d1117`** | accent 亮蓝上白字对比度仅 ≈2:1（不达标），深字 ≈7:1；视觉上更"高级"（VS Code 同款做法） |
+| D3 | **dark 底 `#191724`（柔和紫黑，Rosé Pine main）** | 避免纯黑 OLED 过冲感与"廉价"印象；紫黑与玫瑰 accent 同族，暗面分层靠 1px 边框而非阴影 |
+| D4 | **dark 主按钮文字用深色 `#191724`** | 亮玫瑰 accent 上白字对比度不足，深字 ≈7:1；视觉上更"高级"（VS Code 同款做法） |
 | D5 | **hljs 配色自写并挂令牌** | 官方主题色与自有色板冲突；用 `--mdp-syn-*` 令牌让明暗两套自动切换、且函数/标题复用 accent 蓝形成体系感 |
 | D6 | **复选框自绘（appearance:none + data-URI 勾）** | `accent-color` 无法控制边框/圆角细节；自绘 15px 圆角复选框与整体 1.5px 边框语言一致 |
 | D7 | **表格斑马纹做成 `.zebra` 可选类** | 默认细边框 + 加粗表头已足够清晰，斑马纹留给大表格场景，避免默认样式过重 |
 | D8 | **代码块头部 DOM 约定为 `.mdp-code-header` / `.mdp-code-lang` / `.mdp-copy-btn`** | 头部按钮交互（复制、已复制态）归执行者，本项目只锁结构、配色与布局约束，防止实现发散 |
 | D9 | **标题锚点用 headerLink 包裹全文，且锚点完全可见** | markdown-it-anchor v9 的 headerLink 把标题文字整体包进 `.header-anchor`；若沿用"隐藏锚点、悬停显现"的旧模式会导致标题不可见（实测 bug）。因此锚点继承标题排版（颜色/字号/字重），无下划线、不透明；整行即链接 |
 | D10 | **TOC 激活项不做整行强调色** | 原方案（accent 文字 + accent-soft 底 + accent 左条）在明暗两主题下均显刺眼；改为中性 `bg-active` 底 + 主文本 + 2px accent 左条，accent 仅作指示器，观感更克制高级 |
+| D11 | **主题整体切换为 Rosé Pine 参考（v2.0）** | 用户要求换一套"设计高级感"的主题。经调研（GitHub/Neovim/VS Code 生态最受欢迎的开源主题之一），Rosé Pine 的暖纸白浅色（dawn）+ 柔和紫黑深色（main）+ 玫瑰/鸢尾/金/松绿 muted 语法色与"克制高级"基调完全契合；靛蓝方案（D1-D5）作为 v1.0 存档。仅替换色板令牌，布局/排版/交互结构不变 |
 
 ## 10. 交付物与依赖
 

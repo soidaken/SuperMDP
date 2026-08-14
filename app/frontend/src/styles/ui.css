@@ -11,48 +11,48 @@
    ========================================================================== */
 
 :root {
-  /* ---- 色板 Light ---- */
-  --mdp-bg: #f7f8fa;                 /* 应用底色 */
-  --mdp-bg-raised: #ffffff;          /* 浮起面：弹层、代码块头部 */
-  --mdp-bg-hover: #eef1f5;           /* 悬停态 */
-  --mdp-bg-active: #e4e9f0;          /* 按下态 */
-  --mdp-bg-sunken: #f1f3f6;          /* 凹陷面：表头、引用块 */
-  --mdp-code-bg: #f2f4f7;            /* 代码块底色 */
-  --mdp-inline-code-bg: #eceff3;     /* 行内代码底色 */
-  --mdp-border: #e3e6eb;             /* 1px 细边框 */
-  --mdp-border-strong: #cfd5dd;      /* 强调边框 */
-  --mdp-fg: #1f2430;                 /* 主文本 */
-  --mdp-fg-muted: #5b6472;           /* 次级文本 */
-  --mdp-fg-faint: #8b94a3;           /* 三级文本 */
-  --mdp-accent: #2563eb;             /* 强调色 */
-  --mdp-accent-hover: #1d4ed8;
-  --mdp-accent-soft: rgba(37, 99, 235, 0.10);
-  --mdp-accent-contrast: #ffffff;
-  --mdp-selection: rgba(37, 99, 235, 0.20);
-  --mdp-scrollbar: #c9cfd8;
-  --mdp-scrollbar-hover: #aab2bf;
-  --mdp-kbd-bg: #f1f3f6;
-  --mdp-kbd-border: #d4d9e0;
-  --mdp-kbd-fg: #4b5563;
-  --mdp-overlay-bg: rgba(15, 17, 21, 0.45);
-  --mdp-overlay-border: rgba(255, 255, 255, 0.85);
-  --mdp-overlay-fg: #ffffff;
-  --mdp-danger: #d1242f;
+  /* ---- 色板 Light：Rosé Pine Dawn（暖纸白 + 玫瑰/鸢尾） ---- */
+  --mdp-bg: #faf4ed;                 /* 应用底色：暖纸白 */
+  --mdp-bg-raised: #fffaf3;          /* 浮起面：弹层、代码块头部 */
+  --mdp-bg-hover: #f4ede8;           /* 悬停态 */
+  --mdp-bg-active: #dfdad9;          /* 按下态 */
+  --mdp-bg-sunken: #f2e9e1;          /* 凹陷面：表头、引用块 */
+  --mdp-code-bg: #f4ede8;            /* 代码块底色 */
+  --mdp-inline-code-bg: #f2e9e1;     /* 行内代码底色 */
+  --mdp-border: #e5ddd5;             /* 1px 细边框（暖灰） */
+  --mdp-border-strong: #cecacd;      /* 强调边框 */
+  --mdp-fg: #575279;                 /* 主文本：暖紫灰 */
+  --mdp-fg-muted: #797593;           /* 次级文本 */
+  --mdp-fg-faint: #9893a5;           /* 三级文本 */
+  --mdp-accent: #b4637a;             /* 强调色：玫瑰红 love */
+  --mdp-accent-hover: #9c4f66;
+  --mdp-accent-soft: rgba(180, 99, 122, 0.10);
+  --mdp-accent-contrast: #fffaf3;
+  --mdp-selection: rgba(180, 99, 122, 0.22);
+  --mdp-scrollbar: #d8cfc5;
+  --mdp-scrollbar-hover: #b9aea2;
+  --mdp-kbd-bg: #f2e9e1;
+  --mdp-kbd-border: #e0d7cd;
+  --mdp-kbd-fg: #797593;
+  --mdp-overlay-bg: rgba(25, 23, 36, 0.45);
+  --mdp-overlay-border: rgba(255, 250, 243, 0.85);
+  --mdp-overlay-fg: #fffaf3;
+  --mdp-danger: #b4637a;
 
-  /* ---- 语法高亮 Light（hljs，见 markdown-theme.css） ---- */
-  --mdp-syn-comment: #7d8590;
-  --mdp-syn-keyword: #7c3aed;
-  --mdp-syn-string: #1a7f37;
-  --mdp-syn-number: #b45309;
-  --mdp-syn-title: #2563eb;
-  --mdp-syn-builtin: #0891b2;
-  --mdp-syn-attr: #0f766e;
-  --mdp-syn-params: #374151;
-  --mdp-syn-meta: #6b7280;
-  --mdp-syn-deletion: #d1242f;
-  --mdp-syn-deletion-bg: rgba(209, 36, 47, 0.10);
-  --mdp-syn-addition: #1a7f37;
-  --mdp-syn-addition-bg: rgba(26, 127, 55, 0.10);
+  /* ---- 语法高亮 Light（hljs，Rosé Pine Dawn 语法色） ---- */
+  --mdp-syn-comment: #9893a5;
+  --mdp-syn-keyword: #b4637a;
+  --mdp-syn-string: #286983;
+  --mdp-syn-number: #ea9d34;
+  --mdp-syn-title: #d7827e;
+  --mdp-syn-builtin: #907aa9;
+  --mdp-syn-attr: #56949f;
+  --mdp-syn-params: #797593;
+  --mdp-syn-meta: #9893a5;
+  --mdp-syn-deletion: #b4637a;
+  --mdp-syn-deletion-bg: rgba(180, 99, 122, 0.10);
+  --mdp-syn-addition: #286983;
+  --mdp-syn-addition-bg: rgba(40, 105, 131, 0.12);
 
   /* ---- 字体 ---- */
   --mdp-font-sans: "Segoe UI", "Microsoft YaHei", "PingFang SC",
@@ -81,10 +81,10 @@
   --mdp-radius-lg: 10px;
   --mdp-radius-full: 999px;
 
-  /* ---- 阴影（极淡） ---- */
-  --mdp-shadow-sm: 0 1px 2px rgba(15, 17, 21, 0.05);
-  --mdp-shadow-md: 0 2px 8px rgba(15, 17, 21, 0.08);
-  --mdp-shadow-lg: 0 6px 24px rgba(15, 17, 21, 0.12);
+  /* ---- 阴影（极淡，暖调） ---- */
+  --mdp-shadow-sm: 0 1px 2px rgba(25, 23, 36, 0.06);
+  --mdp-shadow-md: 0 2px 8px rgba(25, 23, 36, 0.09);
+  --mdp-shadow-lg: 0 6px 24px rgba(25, 23, 36, 0.13);
 
   /* ---- 过渡 ---- */
   --mdp-duration-fast: 150ms;
@@ -105,48 +105,48 @@
 }
 
 [data-theme="dark"] {
-  /* ---- 色板 Dark：低饱和深灰蓝，避免纯黑 ---- */
-  --mdp-bg: #0f1115;
-  --mdp-bg-raised: #151a21;
-  --mdp-bg-hover: #1a2029;
-  --mdp-bg-active: #212936;
-  --mdp-bg-sunken: #0b0d10;
-  --mdp-code-bg: #14181f;
-  --mdp-inline-code-bg: #1c222c;
-  --mdp-border: #232a35;
-  --mdp-border-strong: #363f4d;
-  --mdp-fg: #e7eaf0;
-  --mdp-fg-muted: #9aa3b2;
-  --mdp-fg-faint: #667085;
-  --mdp-accent: #6ea8fe;
-  --mdp-accent-hover: #93c5fd;
-  --mdp-accent-soft: rgba(110, 168, 254, 0.14);
-  --mdp-accent-contrast: #0d1117; /* 亮蓝按钮上用深字，对比度更佳 */
-  --mdp-selection: rgba(110, 168, 254, 0.30);
-  --mdp-scrollbar: #2c3442;
-  --mdp-scrollbar-hover: #3e4a5c;
-  --mdp-kbd-bg: #1a2029;
-  --mdp-kbd-border: #2e3745;
-  --mdp-kbd-fg: #b8c2d0;
-  --mdp-overlay-bg: rgba(10, 12, 16, 0.55);
-  --mdp-overlay-border: rgba(255, 255, 255, 0.80);
-  --mdp-overlay-fg: #ffffff;
-  --mdp-danger: #f87171;
+  /* ---- 色板 Dark：Rosé Pine main（柔和紫黑，非纯黑） ---- */
+  --mdp-bg: #191724;
+  --mdp-bg-raised: #1f1d2e;
+  --mdp-bg-hover: #21202e;
+  --mdp-bg-active: #403d52;
+  --mdp-bg-sunken: #131120;
+  --mdp-code-bg: #1f1d2e;
+  --mdp-inline-code-bg: #26233a;
+  --mdp-border: #2d2a3f;
+  --mdp-border-strong: #403d52;
+  --mdp-fg: #e0def4;
+  --mdp-fg-muted: #908caa;
+  --mdp-fg-faint: #6e6a86;
+  --mdp-accent: #ebbcba; /* 玫瑰 rose */
+  --mdp-accent-hover: #f3cfcd;
+  --mdp-accent-soft: rgba(235, 188, 186, 0.12);
+  --mdp-accent-contrast: #191724; /* 亮 accent 按钮上用深字，对比度更佳 */
+  --mdp-selection: rgba(235, 188, 186, 0.25);
+  --mdp-scrollbar: #2d2a3f;
+  --mdp-scrollbar-hover: #403d52;
+  --mdp-kbd-bg: #21202e;
+  --mdp-kbd-border: #403d52;
+  --mdp-kbd-fg: #908caa;
+  --mdp-overlay-bg: rgba(12, 11, 18, 0.55);
+  --mdp-overlay-border: rgba(224, 222, 244, 0.85);
+  --mdp-overlay-fg: #e0def4;
+  --mdp-danger: #eb6f92;
 
-  /* ---- 语法高亮 Dark ---- */
-  --mdp-syn-comment: #667085;
-  --mdp-syn-keyword: #a78bfa;
-  --mdp-syn-string: #6ee7b7;
-  --mdp-syn-number: #fbbf24;
-  --mdp-syn-title: #6ea8fe;
-  --mdp-syn-builtin: #22d3ee;
-  --mdp-syn-attr: #5eead4;
-  --mdp-syn-params: #cbd5e1;
-  --mdp-syn-meta: #94a3b8;
-  --mdp-syn-deletion: #f87171;
-  --mdp-syn-deletion-bg: rgba(248, 113, 113, 0.14);
-  --mdp-syn-addition: #4ade80;
-  --mdp-syn-addition-bg: rgba(74, 222, 128, 0.14);
+  /* ---- 语法高亮 Dark（Rosé Pine main 语法色） ---- */
+  --mdp-syn-comment: #6e6a86;
+  --mdp-syn-keyword: #eb6f92;
+  --mdp-syn-string: #9ccfd8;
+  --mdp-syn-number: #f6c177;
+  --mdp-syn-title: #ebbcba;
+  --mdp-syn-builtin: #c4a7e7;
+  --mdp-syn-attr: #9ccfd8;
+  --mdp-syn-params: #908caa;
+  --mdp-syn-meta: #6e6a86;
+  --mdp-syn-deletion: #eb6f92;
+  --mdp-syn-deletion-bg: rgba(235, 111, 146, 0.12);
+  --mdp-syn-addition: #9ccfd8;
+  --mdp-syn-addition-bg: rgba(156, 207, 216, 0.12);
 
   /* 暗面分层靠边框，阴影极淡即可 */
   --mdp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
