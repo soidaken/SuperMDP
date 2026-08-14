@@ -5,10 +5,19 @@ interface SettingsPopoverProps {
   settings: Settings
   onUpdate: (patch: Partial<Settings>) => void
   onClose: () => void
+  registerMsg: string | null
+  onRegisterDefault: () => void
 }
 
-/** 设置弹层（design-spec §6.6）：KaTeX / mermaid 开关，即时生效并持久化。 */
-export function SettingsPopover({ open, settings, onUpdate, onClose }: SettingsPopoverProps) {
+/** 设置弹层（design-spec §6.6）：KaTeX / mermaid 开关 + 文件关联，即时生效并持久化。 */
+export function SettingsPopover({
+  open,
+  settings,
+  onUpdate,
+  onClose,
+  registerMsg,
+  onRegisterDefault,
+}: SettingsPopoverProps) {
   return (
     <div className={`mdp-popover${open ? ' open' : ''}`} role="dialog" aria-label="渲染设置">
       <p className="mdp-popover-title">渲染设置</p>
@@ -46,6 +55,12 @@ export function SettingsPopover({ open, settings, onUpdate, onClose }: SettingsP
           }}
         />
       </div>
+      <div className="mdp-popover-sep" />
+      <p className="mdp-popover-title">文件关联</p>
+      <button type="button" className="mdp-btn mdp-btn-block" onClick={onRegisterDefault}>
+        设为 .md 默认打开程序
+      </button>
+      {registerMsg && <p className="mdp-popover-msg">{registerMsg}</p>}
     </div>
   )
 }

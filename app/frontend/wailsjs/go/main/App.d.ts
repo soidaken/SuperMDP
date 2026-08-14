@@ -4,9 +4,13 @@ import {main} from '../models';
 
 export function GetFileInfo(arg1:string):Promise<main.FileInfo>;
 
+export function GetStartupFile():Promise<string>;
+
 export function OpenFileDialog():Promise<string>;
 
 export function ReadFile(arg1:string):Promise<main.ReadResult>;
+
+export function RegisterAssociations():Promise<boolean|string>;
 
 export function StopWatch():Promise<void>;
 

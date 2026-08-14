@@ -307,9 +307,9 @@
 
 ### 7.1 主题切换
 
-1. 启动：读 `localStorage["supermdp:theme"]`；无值则用 `matchMedia('(prefers-color-scheme: dark)')` 判定，把结果写入 `document.documentElement.dataset.theme`。
+1. 启动：读 `localStorage["supermdp:theme"]`；无值则默认 **light**（不跟随系统主题），把结果写入 `document.documentElement.dataset.theme`。
 2. 点击工具栏主题钮：在 `light` / `dark` 间切换 → 更新 `data-theme` → 写回 localStorage。
-3. 系统主题变化：仅在用户未手动选择过（localStorage 无值）时跟随。切换过程无闪烁：`data-theme` 在首帧前设置（内联脚本或尽早执行）。
+3. 不监听系统主题变化（产品决策：默认浅色、稳定不跳动）。切换过程无闪烁：`data-theme` 在首帧前设置（index.html 内联脚本）。
 
 ### 7.2 设置弹层
 
@@ -349,7 +349,7 @@
 > 验收时在 800×600 最小窗口、1280×800、1600×900 三种尺寸下分别检查 light / dark 两套主题。
 
 **A. 主题与整体**
-- [ ] light/dark 切换即时、无闪烁；重启后记住选择；首次启动跟随系统
+- [ ] light/dark 切换即时、无闪烁；重启后记住选择；**首次启动默认浅色（不跟随系统）**
 - [ ] dark 底色为低饱和深灰蓝（≈`#0f1115`），**非纯黑**；无渐变、无发光
 - [ ] accent 只出现在：链接、激活态（目录项/图标钮）、主按钮
 - [ ] 全界面过渡 150–200ms，无多余动画

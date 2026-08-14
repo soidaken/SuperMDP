@@ -565,6 +565,26 @@ body {
   color: var(--mdp-fg-faint);
 }
 
+/* 弹层内分区：文件关联（默认打开程序） */
+
+.mdp-popover-sep {
+  height: 1px;
+  margin: 12px 0;
+  background: var(--mdp-border);
+}
+
+.mdp-btn-block {
+  width: 100%;
+}
+
+.mdp-popover-msg {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--mdp-fg-muted);
+  word-break: break-word;
+}
+
 /* ---------- 开关 ---------- */
 
 .mdp-switch {

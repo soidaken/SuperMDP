@@ -13,6 +13,7 @@ import { useTheme } from './hooks/useTheme'
 import { useSettings } from './hooks/useSettings'
 import { useFile } from './hooks/useFile'
 import { isMarkdownPath } from './lib/format'
+import { GetStartupFile, RegisterAssociations } from '../wailsjs/go/main/App'
 import { BrowserOpenURL, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime'
 
 type RenderState = 'idle' | 'rendering' | 'done' | 'error'
@@ -34,6 +35,7 @@ export default function App() {
   const [wordCount, setWordCount] = useState(0)
   const [renderMs, setRenderMs] = useState<number | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [registerMsg, setRegisterMsg] = useState<string | null>(null)
 
   const contentScrollRef = useRef<HTMLDivElement>(null)
   const contentBodyRef = useRef<HTMLDivElement>(null)
@@ -215,6 +217,32 @@ export default function App() {
     [handleCopy],
   )
 
+  /* ---------- 启动时打开命令行传入的文件（注册为 .md 默认打开程序后，双击即进入此路径） ---------- */
+  useEffect(() => {
+    let cancelled = false
+    GetStartupFile()
+      .then((p) => {
+        if (!cancelled && p) void file.openPath(p)
+      })
+      .catch(() => {
+        /* 开发模式无 runtime 时忽略 */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [file.openPath])
+
+  /* ---------- 设为 .md 默认打开程序（设置弹层按钮） ---------- */
+  const handleRegisterDefault = useCallback(async () => {
+    try {
+      // wails 多返回值（bool, string）在运行时以数组返回，d.ts 生成为联合类型
+      const result = (await RegisterAssociations()) as unknown as [boolean, string]
+      setRegisterMsg(result[1])
+    } catch (err) {
+      setRegisterMsg(String(err))
+    }
+  }, [])
+
   /* ---------- 拖拽打开（§7.3）：HTML5 事件控制遮罩；Wails 原生 OnFileDrop 取路径 ---------- */
   useEffect(() => {
     let depth = 0
@@ -342,6 +370,8 @@ export default function App() {
             settings={settings}
             onUpdate={updateSettings}
             onClose={() => setPopoverOpen(false)}
+            registerMsg={registerMsg}
+            onRegisterDefault={() => void handleRegisterDefault()}
           />
         }
       />

@@ -6,12 +6,20 @@ export function GetFileInfo(arg1) {
   return window['go']['main']['App']['GetFileInfo'](arg1);
 }
 
+export function GetStartupFile() {
+  return window['go']['main']['App']['GetStartupFile']();
+}
+
 export function OpenFileDialog() {
   return window['go']['main']['App']['OpenFileDialog']();
 }
 
 export function ReadFile(arg1) {
   return window['go']['main']['App']['ReadFile'](arg1);
+}
+
+export function RegisterAssociations() {
+  return window['go']['main']['App']['RegisterAssociations']();
 }
 
 export function StopWatch() {
