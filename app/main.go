@@ -25,6 +25,11 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
+		// 启用 Wails 文件拖放：Go 侧解析拖入文件的绝对路径并经
+		// "wails:file-drop" 事件回传前端（默认关闭，不开启则拖拽无响应）
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop: true,
+		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
