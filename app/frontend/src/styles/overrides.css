@@ -13,3 +13,14 @@
   background: transparent;
   color: var(--mdp-fg-muted);
 }
+
+/* 大文件分段渲染的「渲染中…」占位（P1-1）：用设计令牌，不破坏设计语言 */
+.mdp-render-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: var(--mdp-font-size-sm);
+  color: var(--mdp-fg-faint);
+  user-select: none;
+}

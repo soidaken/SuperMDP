@@ -72,3 +72,76 @@ export async function enhanceMermaid(
   }
   return { html: tmp.innerHTML, sources }
 }
+
+/**
+ * 容器版 mermaid 渲染（分段渲染管线用）：把容器内所有 code.language-mermaid
+ * 替换为清洗过的 <div class="mermaid">svg</div>。
+ * - 主题重渲：传入 cached 源码后，先把已渲染的 div.mermaid 按文档顺序重建为
+ *   源码块，再以新主题重渲；
+ * - 渲染失败：降级为带语言标签的源码代码块 + onError 状态栏提示。
+ */
+export async function renderMermaidInContainer(
+  container: HTMLElement,
+  theme: 'light' | 'dark',
+  cached: MermaidSource[] | null,
+  onError: (message: string) => void,
+): Promise<{ sources: MermaidSource[] }> {
+  // 主题重渲场景：用缓存的源码重建 code.language-mermaid（文档顺序一一对应）
+  if (cached && cached.length > 0) {
+    const divs = Array.from(container.querySelectorAll('div.mermaid'))
+    divs.forEach((div, i) => {
+      const source = cached[i]?.source ?? ''
+      const pre = document.createElement('pre')
+      pre.className = 'mdp-code-block'
+      pre.innerHTML =
+        `<div class="mdp-code-header"><span class="mdp-code-lang">mermaid</span></div>` +
+        `<code class="language-mermaid"></code>`
+      const code = pre.querySelector('code')
+      if (code) code.textContent = source
+      div.replaceWith(pre)
+    })
+  }
+
+  const codes = Array.from(container.querySelectorAll('code.language-mermaid'))
+  if (codes.length === 0) return { sources: cached ?? [] }
+
+  let mermaid: typeof import('mermaid').default
+  try {
+    mermaid = (await import('mermaid')).default
+  } catch {
+    onError('mermaid 加载失败，图表以源码显示')
+    return { sources: cached ?? [] }
+  }
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict', // mermaid 自带清洗，SVG 输出后仍做一次 DOMPurify 清洗
+    theme: theme === 'dark' ? 'dark' : 'default',
+    fontFamily: '"Segoe UI", "Microsoft YaHei", sans-serif',
+  })
+
+  const sources: MermaidSource[] = []
+  for (const code of codes) {
+    const source = code.textContent ?? ''
+    const id = `mmd-${Date.now().toString(36)}-${++seq}`
+    sources.push({ id, source })
+    const pre = code.parentElement
+    try {
+      const { svg } = await mermaid.render(id, source)
+      const wrap = document.createElement('div')
+      wrap.className = 'mermaid'
+      wrap.innerHTML = sanitizeSvg(svg)
+      pre?.replaceWith(wrap)
+    } catch {
+      // 降级：显示源码
+      const fallback = document.createElement('pre')
+      fallback.className = 'mdp-code-block'
+      fallback.innerHTML =
+        `<div class="mdp-code-header"><span class="mdp-code-lang">mermaid</span></div>` +
+        `<code class="language-mermaid">${escapeHtml(source)}</code>`
+      pre?.replaceWith(fallback)
+      onError('mermaid 图表渲染失败，已降级为源码')
+    }
+  }
+  return { sources }
+}

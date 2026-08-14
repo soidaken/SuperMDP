@@ -6,13 +6,16 @@ import { StatusBar } from './components/StatusBar'
 import { EmptyState } from './components/EmptyState'
 import { DragOverlay } from './components/DragOverlay'
 import { SettingsPopover } from './components/SettingsPopover'
-import { renderMarkdown, type RenderResult } from './markdown/renderer'
-import { enhanceMermaid } from './markdown/mermaid'
+import { splitChunks, renderChunked } from './markdown/chunk'
+import type { Heading } from './markdown/md-factory'
+import { renderMermaidInContainer, type MermaidSource } from './markdown/mermaid'
 import { useTheme } from './hooks/useTheme'
 import { useSettings } from './hooks/useSettings'
 import { useFile } from './hooks/useFile'
 import { isMarkdownPath } from './lib/format'
 import { BrowserOpenURL, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime'
+
+type RenderState = 'idle' | 'rendering' | 'done' | 'error'
 
 export default function App() {
   const { theme, toggleTheme } = useTheme()
@@ -25,70 +28,112 @@ export default function App() {
   const [dropDanger, setDropDanger] = useState<string | null>(null)
   const [mermaidMsg, setMermaidMsg] = useState<string | null>(null)
 
-  const [render, setRender] = useState<RenderResult | null>(null)
-  const [mermaidHtml, setMermaidHtml] = useState<string | null>(null)
+  const [renderState, setRenderState] = useState<RenderState>('idle')
+  const [progress, setProgress] = useState(0)
+  const [tocHeadings, setTocHeadings] = useState<Heading[]>([])
+  const [wordCount, setWordCount] = useState(0)
+  const [renderMs, setRenderMs] = useState<number | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const contentScrollRef = useRef<HTMLDivElement>(null)
+  const contentBodyRef = useRef<HTMLDivElement>(null)
   const settingsAnchorRef = useRef<HTMLSpanElement>(null)
   const renderGen = useRef(0)
-  const mermaidToken = useRef(0)
+  const mermaidBusy = useRef(false)
+  const mermaidSources = useRef<MermaidSource[]>([])
 
-  /* ---------- 渲染：大文件不阻塞 UI（requestIdleCallback / setTimeout 调度） ---------- */
+  /* ---------- 分段渲染（P1-1）：Worker 渲染不占主线程，逐块 rAF 插入，渐进呈现 ---------- */
   useEffect(() => {
+    const body = contentBodyRef.current
     if (!file.doc) {
-      setRender(null)
+      setRenderState('idle')
+      setProgress(0)
+      setTocHeadings([])
+      setWordCount(0)
+      setRenderMs(null)
       setActiveId(null)
+      mermaidSources.current = []
       return
     }
     const gen = ++renderGen.current
-    const content = file.doc.content
-    const run = () => {
-      if (gen !== renderGen.current) return
-      const result = renderMarkdown(content, {
-        katex: settings.katex,
-        mermaid: settings.mermaid,
-      })
-      if (gen !== renderGen.current) return
-      setRender(result)
-      setActiveId(null)
-    }
-    if (typeof window.requestIdleCallback === 'function') {
-      const id = window.requestIdleCallback(run, { timeout: 300 })
-      return () => window.cancelIdleCallback(id)
-    }
-    const id = window.setTimeout(run, 0)
-    return () => window.clearTimeout(id)
+    setRenderState('rendering')
+    setProgress(0)
+    setTocHeadings([])
+    setWordCount(0)
+    setRenderMs(null)
+    setActiveId(null)
+    mermaidSources.current = []
+    if (body) body.innerHTML = '' // 渐进插入模式下 DOM 由渲染循环管理
+
+    const chunks = splitChunks(file.doc.content)
+    const accHeadings: Heading[] = []
+    let accWords = 0
+
+    const job = renderChunked(
+      chunks,
+      { katex: settings.katex, mermaid: settings.mermaid },
+      {
+        onChunk: (index, total, result) => {
+          if (gen !== renderGen.current) return
+          accHeadings.push(...result.headings)
+          accWords += result.wordCount
+          // 调度器保证每帧至多一块：渐进插入，不阻塞滚动/主题切换
+          contentBodyRef.current?.insertAdjacentHTML('beforeend', result.html)
+          setTocHeadings([...accHeadings])
+          setWordCount(accWords)
+          setProgress(Math.round(((index + 1) / total) * 100))
+        },
+        onDone: (ms, words) => {
+          if (gen !== renderGen.current) return
+          setRenderMs(ms)
+          setWordCount(words)
+          setProgress(100)
+          setRenderState('done')
+        },
+        onError: (msg) => {
+          if (gen !== renderGen.current) return
+          setRenderState('error')
+          setMermaidMsg(msg)
+        },
+      },
+    )
+    return () => job.cancel()
   }, [file.doc, settings.katex, settings.mermaid])
 
-  /* ---------- mermaid：懒加载 + 字符串级渲染（可随主题重渲，StrictMode 安全） ---------- */
+  /* ---------- mermaid：懒加载，容器版渲染；主题切换用缓存源码重渲 ---------- */
   useEffect(() => {
-    if (!render || !settings.mermaid) {
-      setMermaidHtml(null)
-      return
-    }
-    const token = ++mermaidToken.current
-    const baseHtml = render.html
-    void enhanceMermaid(baseHtml, theme, (msg) => {
-      if (token === mermaidToken.current) setMermaidMsg(msg)
-    }).then((res) => {
-      if (token !== mermaidToken.current) return
-      setMermaidHtml(res.html)
-    })
-  }, [render, settings.mermaid, theme])
-
-  const displayHtml = mermaidHtml ?? render?.html ?? null
+    const body = contentBodyRef.current
+    if (renderState !== 'done' || !settings.mermaid || !body) return
+    if (mermaidBusy.current) return // StrictMode 双跑防护
+    mermaidBusy.current = true
+    const token = ++renderGen.current // 复用 renderGen 作为 mermaid 世代
+    void renderMermaidInContainer(
+      body,
+      theme,
+      mermaidSources.current.length > 0 ? mermaidSources.current : null,
+      (msg) => {
+        if (token === renderGen.current) setMermaidMsg(msg)
+      },
+    )
+      .then((res) => {
+        mermaidBusy.current = false
+        if (token === renderGen.current) mermaidSources.current = res.sources
+      })
+      .catch(() => {
+        mermaidBusy.current = false
+      })
+  }, [renderState, settings.mermaid, theme])
 
   /* ---------- 目录滚动跟随（rAF 节流，§7.4） ---------- */
   useEffect(() => {
     const el = contentScrollRef.current
-    if (!el || !render) return
+    if (!el || tocHeadings.length === 0) return
     let raf = 0
     const update = () => {
       raf = 0
       const containerTop = el.getBoundingClientRect().top
       let current: string | null = null
-      for (const h of render.headings) {
+      for (const h of tocHeadings) {
         const node = document.getElementById(h.id)
         if (!node) continue
         if (node.getBoundingClientRect().top - containerTop <= 96) current = h.id
@@ -106,7 +151,7 @@ export default function App() {
       cancelAnimationFrame(raf0)
       el.removeEventListener('scroll', onScroll)
     }
-  }, [render])
+  }, [tocHeadings])
 
   const navigateTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -274,8 +319,9 @@ export default function App() {
     return () => document.removeEventListener('mousedown', onDown)
   }, [popoverOpen])
 
-  const hasToc = !!file.doc && !!render && render.headings.length > 0
+  const hasToc = !!file.doc && tocHeadings.length > 0
   const statusDanger = file.danger ?? dropDanger ?? mermaidMsg
+  const showPlaceholder = renderState === 'rendering' && progress === 0
 
   return (
     <div className="mdp-app">
@@ -300,16 +346,17 @@ export default function App() {
         }
       />
       <div className={`mdp-main${!tocOpen || !hasToc ? ' toc-collapsed' : ''}`}>
-        {hasToc && (
-          <Toc headings={render!.headings} activeId={activeId} onNavigate={navigateTo} />
-        )}
+        {hasToc && <Toc headings={tocHeadings} activeId={activeId} onNavigate={navigateTo} />}
         <div ref={contentScrollRef} className="mdp-content">
-          {render && displayHtml ? (
-            <div
-              className="mdp-content-body"
-              dangerouslySetInnerHTML={{ __html: displayHtml }}
-              onClick={handleContentClick}
-            />
+          {file.doc ? (
+            <>
+              {showPlaceholder && <div className="mdp-render-progress">渲染中… 0%</div>}
+              <div
+                ref={contentBodyRef}
+                className="mdp-content-body"
+                onClick={handleContentClick}
+              />
+            </>
           ) : (
             <EmptyState />
           )}
@@ -319,9 +366,11 @@ export default function App() {
         fileName={file.doc?.fileName ?? null}
         fileSize={file.doc?.fileSize ?? null}
         encoding={file.doc?.encoding ?? null}
-        wordCount={render?.wordCount ?? null}
-        renderMs={render?.renderMs ?? null}
+        wordCount={wordCount}
+        renderMs={renderMs}
         loading={file.loading}
+        rendering={renderState === 'rendering'}
+        progress={progress}
         notice={file.notice}
         danger={statusDanger}
       />
