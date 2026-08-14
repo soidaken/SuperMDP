@@ -209,3 +209,51 @@
 | `app/frontend/src/markdown/review-perf.test.ts` | 验收者性能探针（2 例，写入 perf-result.json） |
 
 *验收者独立立场说明：所有「PASS」均以本报告 §0 的独立复跑/审查/对抗测试为据，执行者自测（18 例）仅作基线对照，不构成放行依据。*
+
+---
+
+## 6. T5 复验结论（2026-08-15 二轮验收）
+
+> 复验对象：`6b7f692`(P2-2)、`55758f8`(P2-3)、`7165e00`(P1-1)、`6bfb13c`(P2-1) 四个 fix 提交 + 重建的 `app/build/bin/app.exe`（17,771,008 字节，02:52 构建）。
+> 方法：独立代码审查 + 全套自动化复跑（vitest 70/70、tsc strict、go build/vet/test）+ 真实语料切块复测 + 冒烟。
+
+### 6.1 四项缺陷复验结果（全部 PASS）
+
+| 缺陷 | 判定 | 证据 |
+|---|---|---|
+| P1-1 分段渲染（G-1/G-2） | ✅ PASS（自动化/代码级） | 见 6.2 |
+| P2-1 style 恶意形态 | ✅ PASS | `sanitize.ts:39-48` DANGEROUS_STYLE hook（`url(javascript:)` / `expression(` / `@import` / `behavior:` 命中即整条移除 style）；`review-security.test.ts` 新增 2 例（5 种危险形态剔除、良性 `min-width/color` 保留）+ 原 style 用例改造为断言移除；security 套件 16 例全过 |
+| P2-2 删除线 `<s>` | ✅ PASS | `docs/design/markdown-theme.css:79` 与 `frontend/src/styles/markdown-theme.css:79` 均有 `.mdp-content s { color: var(--mdp-fg-muted) }`，`fc /b` 二进制对比 0 差异（双副本完全一致）；`style-sync.test.ts` 断言 `<s>` 输出 + 双份同步 |
+| P2-3 dockerfile/powershell | ✅ PASS | `md-factory.ts:15-16` 模块顶层 `hljs.registerLanguage`（主线程 `renderer.ts` 与 `render.worker.ts` 均 import 同一 md-factory → 共用注册实例）；`renderer.test.ts` P2-3 用例：`getLanguage` 命中 + 渲染出 `.hljs-keyword/.hljs-section/.hljs-string` 高亮类 |
+
+### 6.2 P1-1 分段渲染核验要点（代码审查 + 独立复测）
+
+- **块边界不切断围栏/公式**：`chunk.ts:19-51` splitChunks 按行累积 + `fence` 状态机（`code`/`math`）感知，仅在 fence 外部且 ≥64KB 时切块；块边界恒为行边界。
+- **独立复测**（临时 vitest 复测文件，跑完即删，未入库）：`big-5mb.md`（5,243,094B）默认 64KB 切块 → **零切断**（逐块 `^``` 行数 % 2 === 0`、`^\$\$ 行数 % 2 === 0` 全部通过）、**拼接逐字节还原**（`chunks.join('') === src`）；`sample.md`（强制 2048 上限多块）与 `edge.md`（损坏语法/XSS 变体）同样零切断、还原。最大块 66,004B（≈64.5KB）为「fence 完整性优先」的软约束，属设计权衡（fence 内宁可不切块也不切断）。
+- **乱序重组**：`chunk.ts:106-153` pending Map + nextIndex 按全局 index 依序入队 → `onChunk` 恒按文档顺序产出。
+- **worker 协议**：`render.worker.ts` 双 worker 并行（index%2 平分任务），markdown-it+hljs+katex 纯字符串管道、无 DOM；`md-factory.ts` 为唯一构建点，Worker 可安全复用。
+- **rAF 分帧**：`chunk.ts:110-140` 每帧至多处理一块 + App.tsx `insertAdjacentHTML('beforeend')` 渐进插入 → UI 全程可交互。
+- **回退路径**：`chunk.ts:213-253` renderChunkedFallback（无 Worker 环境 setTimeout 1ms 逐块）；vitest/jsdom 实测走此路径，`chunk.test.ts`「每片恰好一块」mock 计时验证渐进结构。
+- **进度/占位用设计令牌**：状态栏「渲染中 X%」（StatusBar.tsx:30-31，`--mdp-fg-muted` 继承）；内容区占位 `.mdp-render-progress`（overrides.css:18-26，`--mdp-font-size-sm` / `--mdp-fg-faint`）。
+- **标题 id 跨块唯一**：`renderer.ts:92-123` HeadingIdState + assignHeadingIds（与 markdown-it-anchor uniqueSlug 同方案，全量渲染幂等 no-op）；`chunk.test.ts` 等价性用例断言分块与全量渲染的标题 id 集合一致。
+- **数据一致性**：`docs/acceptance/review/perf-result.json` chunked-1mb-jsdom（17 块、25,711ms、每块 1,512ms）——jsdom 悲观上界与全量 jsdom（24,322ms）同量级（回退路径同为单线程），与「WebView2 受益于 worker 并行 + rAF 插入、UI 不冻结」的结论一致，无矛盾。
+
+### 6.3 T5 后全套复跑
+
+| 项 | 结果 |
+|---|---|
+| `npx vitest run` | ✅ **70/70**（7 文件：renderer 19 / chunk 6 / style-sync 1 / review-security 16 / review-edge 16 / review-gfm 9 / review-perf 2） |
+| `npm run build`（tsc strict + vite） | ✅ 0 错误 |
+| `go build ./...` / `go vet ./...` / `go test ./...` | ✅ 全绿 |
+| 冒烟 `app/build/bin/app.exe`（T5 重建） | ✅ 启动 10s 存活（工作集 34.2MB），`CloseMainWindow` 干净退出 |
+| 构建产物无外部网络 URL | ✅（T4 已验，T5 未引入网络依赖） |
+
+### 6.4 判定更新与通过率重算
+
+- **G-1 / G-2：FAIL → ✅ 自动化/代码级 PASS**（5MB 渲染移入 Worker、逐块渐进呈现、UI 不冻结、进度可见；`big-5mb.md` 真机打开手感/进度显示/交互流畅度按 manual-test.md M-10 待真机确认）。
+- **checklist 49 项重算**：34 项完全 PASS + **15 项**代码级 PASS 待真机（原 13 + G-1/G-2 2 项）→ **0 FAIL**；E-1（真实 mermaid SVG 渲染）归真机 M-8。
+- **P2 三项（P2-1 / P2-2 / P2-3）全部关闭**；**P1-1 关闭**（真机复核项保留 M-10）。
+
+### 6.5 结论
+
+**四项修复全部通过，无回归**（70/70 全绿 + tsc/go 全绿 + 冒烟通过 + 独立切块复测零切断/还原）。T4 遗留缺陷清零，仅剩 15 项真机复核（manual-test.md，不阻塞收尾）。**T5 复验通过，具备 T6 收尾条件。**
