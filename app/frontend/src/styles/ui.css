@@ -10,6 +10,43 @@
    1. 设计令牌
    ========================================================================== */
 
+/* ---- 内置字体（随应用分发，离线可用） ----
+   JetBrains Mono（OFL 1.1，https://www.jetbrains.com/lp/mono/）
+   HarmonyOS Sans SC（华为，可自由商用/再分发，保留版权声明）
+   许可声明见 docs/FONTS-LICENSE.md */
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/fonts/HarmonyOS_Sans_SC_Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/fonts/HarmonyOS_Sans_SC_Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* ---- 色板 Light：Rosé Pine Dawn（暖纸白 + 玫瑰/鸢尾） ---- */
   --mdp-bg: #faf4ed;                 /* 应用底色：暖纸白 */

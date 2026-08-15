@@ -99,7 +99,7 @@ export function SettingsPopover({
           className="mdp-font-input"
           type="text"
           list={FONT_LIST_ID}
-          placeholder="默认 (Segoe UI)"
+          placeholder="内置: JetBrains Mono"
           value={settings.fonts.latin ?? ''}
           onChange={(e) => setFont('latin', e.target.value)}
           spellCheck={false}
@@ -115,7 +115,7 @@ export function SettingsPopover({
           className="mdp-font-input"
           type="text"
           list={FONT_LIST_ID}
-          placeholder="默认 (Microsoft YaHei)"
+          placeholder="内置: HarmonyOS Sans SC"
           value={settings.fonts.cjk ?? ''}
           onChange={(e) => setFont('cjk', e.target.value)}
           spellCheck={false}

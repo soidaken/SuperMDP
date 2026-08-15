@@ -1,7 +1,7 @@
 export interface Fonts {
-  /** 英文字体（拉丁字符优先），null = 使用默认栈 */
+  /** 英文字体（拉丁字符优先），null = 使用内置默认 JetBrains Mono */
   latin: string | null
-  /** 中文字体（CJK 字符优先），null = 使用默认栈 */
+  /** 中文字体（CJK 字符优先），null = 使用内置默认 HarmonyOS Sans SC */
   cjk: string | null
 }
 
@@ -24,7 +24,9 @@ export const DEFAULT_ZOOM = 1.25
 const DEFAULTS: Settings = {
   katex: true,
   mermaid: true,
-  fonts: { latin: null, cjk: null },
+  // 内置字体（随应用分发，见 docs/FONTS-LICENSE.md）：
+  // 英文字体 JetBrains Mono（OFL），中文字体 HarmonyOS Sans SC（华为可商用）
+  fonts: { latin: 'JetBrains Mono', cjk: 'HarmonyOS Sans SC' },
   zoom: DEFAULT_ZOOM,
 }
 
