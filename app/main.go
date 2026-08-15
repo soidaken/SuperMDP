@@ -19,7 +19,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:     "超级MD预览器",
 		Width:     1280,
-		Height:    960,
+		Height:    1060,
 		MinWidth:  800,
 		MinHeight: 600,
 		AssetServer: &assetserver.Options{
