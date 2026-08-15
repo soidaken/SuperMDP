@@ -1,4 +1,4 @@
-import type { Settings } from '../lib/settings'
+import { ZOOM_OPTIONS, type Settings } from '../lib/settings'
 import { previewFontFamily } from '../lib/fonts'
 
 interface SettingsPopoverProps {
@@ -13,7 +13,7 @@ interface SettingsPopoverProps {
 
 const FONT_LIST_ID = 'mdp-system-fonts'
 
-/** 设置弹层（design-spec §6.6）：KaTeX / mermaid 开关 + 中英文字体 + 文件关联。 */
+/** 设置弹层（design-spec §6.6）：渲染开关 + 页面缩放 + 中英文字体 + 文件关联。 */
 export function SettingsPopover({
   open,
   settings,
@@ -69,6 +69,22 @@ export function SettingsPopover({
             onClose()
           }}
         />
+      </div>
+
+      <div className="mdp-popover-sep" />
+      <p className="mdp-popover-title">页面缩放</p>
+      <div className="mdp-seg" role="group" aria-label="页面缩放">
+        {ZOOM_OPTIONS.map((pct) => (
+          <button
+            key={pct}
+            type="button"
+            className={`mdp-seg-btn${Math.round(settings.zoom * 100) === pct ? ' active' : ''}`}
+            aria-pressed={Math.round(settings.zoom * 100) === pct}
+            onClick={() => onUpdate({ zoom: pct / 100 })}
+          >
+            {pct}%
+          </button>
+        ))}
       </div>
 
       <div className="mdp-popover-sep" />

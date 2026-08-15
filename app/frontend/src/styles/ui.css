@@ -587,6 +587,41 @@ body {
   word-break: break-word;
 }
 
+/* 弹层内：页面缩放分段选择 */
+
+.mdp-seg {
+  display: flex;
+  gap: 4px;
+  padding: 6px 0;
+}
+
+.mdp-seg-btn {
+  flex: 1;
+  height: 28px;
+  font-family: inherit;
+  font-size: var(--mdp-font-size-sm);
+  font-weight: 500;
+  color: var(--mdp-fg-muted);
+  background: var(--mdp-bg-raised);
+  border: 1px solid var(--mdp-border);
+  border-radius: var(--mdp-radius-sm);
+  cursor: pointer;
+  transition: color var(--mdp-duration-fast) var(--mdp-ease),
+              background-color var(--mdp-duration-fast) var(--mdp-ease),
+              border-color var(--mdp-duration-fast) var(--mdp-ease);
+}
+
+.mdp-seg-btn:hover {
+  color: var(--mdp-fg);
+  background: var(--mdp-bg-hover);
+}
+
+.mdp-seg-btn.active {
+  color: var(--mdp-accent);
+  border-color: var(--mdp-accent);
+  background: var(--mdp-accent-soft);
+}
+
 /* 弹层内：字体设置（中/英文字体，系统字体列表 datalist 过滤） */
 
 .mdp-font-row {

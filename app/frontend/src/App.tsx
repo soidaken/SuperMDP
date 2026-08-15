@@ -44,6 +44,11 @@ export default function App() {
     applyFonts(settings.fonts)
   }, [settings.fonts])
 
+  /* ---------- 页面级缩放（根元素 zoom，等效浏览器页面缩放） ---------- */
+  useEffect(() => {
+    document.documentElement.style.zoom = String(settings.zoom)
+  }, [settings.zoom])
+
   useEffect(() => {
     let cancelled = false
     GetSystemFonts()

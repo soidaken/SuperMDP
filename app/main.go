@@ -6,7 +6,6 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 //go:embed all:frontend/dist
@@ -30,10 +29,6 @@ func main() {
 		// "wails:file-drop" 事件回传前端（默认关闭，不开启则拖拽无响应）
 		DragAndDrop: &options.DragAndDrop{
 			EnableFileDrop: true,
-		},
-		// 页面级缩放 125%（WebView2 原生 ZoomFactor，等效浏览器 Ctrl+ 放大）
-		Windows: &windows.Options{
-			ZoomFactor: 1.25,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
