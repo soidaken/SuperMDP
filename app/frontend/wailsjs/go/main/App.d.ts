@@ -14,6 +14,8 @@ export function ReadFile(arg1:string):Promise<main.ReadResult>;
 
 export function RegisterAssociations():Promise<boolean|string>;
 
+export function SetZoomPref(arg1:number):Promise<void>;
+
 export function StopWatch():Promise<void>;
 
 export function WatchFile(arg1:string):Promise<void>;

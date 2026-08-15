@@ -26,6 +26,10 @@ export function RegisterAssociations() {
   return window['go']['main']['App']['RegisterAssociations']();
 }
 
+export function SetZoomPref(arg1) {
+  return window['go']['main']['App']['SetZoomPref'](arg1);
+}
+
 export function StopWatch() {
   return window['go']['main']['App']['StopWatch']();
 }

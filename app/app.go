@@ -76,6 +76,11 @@ func (a *App) GetStartupFile() string {
 	return a.startupFile
 }
 
+// SetZoomPref 保存页面缩放偏好（百分比），下次启动生效（WebView2 ZoomFactor）。
+func (a *App) SetZoomPref(pct int) error {
+	return SaveZoom(pct)
+}
+
 // shutdown stops any running file watcher so no events are emitted
 // while the application is tearing down.
 func (a *App) shutdown(ctx context.Context) {

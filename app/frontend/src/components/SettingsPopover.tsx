@@ -9,6 +9,8 @@ interface SettingsPopoverProps {
   registerMsg: string | null
   onRegisterDefault: () => void
   systemFonts: string[]
+  zoomMsg: string | null
+  onZoomChange: (pct: number) => void
 }
 
 const FONT_LIST_ID = 'mdp-system-fonts'
@@ -22,6 +24,8 @@ export function SettingsPopover({
   registerMsg,
   onRegisterDefault,
   systemFonts,
+  zoomMsg,
+  onZoomChange,
 }: SettingsPopoverProps) {
   const setFont = (kind: 'latin' | 'cjk', value: string) => {
     onUpdate({ fonts: { ...settings.fonts, [kind]: value.trim() || null } })
@@ -80,12 +84,13 @@ export function SettingsPopover({
             type="button"
             className={`mdp-seg-btn${Math.round(settings.zoom * 100) === pct ? ' active' : ''}`}
             aria-pressed={Math.round(settings.zoom * 100) === pct}
-            onClick={() => onUpdate({ zoom: pct / 100 })}
+            onClick={() => onZoomChange(pct)}
           >
             {pct}%
           </button>
         ))}
       </div>
+      <p className="mdp-popover-msg">{zoomMsg ?? '系统级缩放，重启应用后生效'}</p>
 
       <div className="mdp-popover-sep" />
       <p className="mdp-popover-title">字体</p>

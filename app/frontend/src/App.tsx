@@ -14,7 +14,7 @@ import { useSettings } from './hooks/useSettings'
 import { useFile } from './hooks/useFile'
 import { isMarkdownPath } from './lib/format'
 import { applyFonts } from './lib/fonts'
-import { GetStartupFile, GetSystemFonts, RegisterAssociations } from '../wailsjs/go/main/App'
+import { GetStartupFile, GetSystemFonts, RegisterAssociations, SetZoomPref } from '../wailsjs/go/main/App'
 import { BrowserOpenURL, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime'
 
 type RenderState = 'idle' | 'rendering' | 'done' | 'error'
@@ -38,16 +38,12 @@ export default function App() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [registerMsg, setRegisterMsg] = useState<string | null>(null)
   const [systemFonts, setSystemFonts] = useState<string[]>([])
+  const [zoomMsg, setZoomMsg] = useState<string | null>(null)
 
   /* ---------- 字体设置：加载系统字体列表 + 应用所选字体（中/英） ---------- */
   useEffect(() => {
     applyFonts(settings.fonts)
   }, [settings.fonts])
-
-  /* ---------- 页面级缩放（根元素 zoom，等效浏览器页面缩放） ---------- */
-  useEffect(() => {
-    document.documentElement.style.zoom = String(settings.zoom)
-  }, [settings.zoom])
 
   useEffect(() => {
     let cancelled = false
@@ -269,6 +265,20 @@ export default function App() {
     }
   }, [])
 
+  /* ---------- 页面缩放：写入系统配置，重启后生效（WebView2 ZoomFactor） ---------- */
+  const handleZoomChange = useCallback(
+    async (pct: number) => {
+      try {
+        await SetZoomPref(pct)
+        updateSettings({ zoom: pct / 100 })
+        setZoomMsg(`已保存，缩放 ${pct}% 将在重启应用后生效`)
+      } catch (err) {
+        setZoomMsg(String(err))
+      }
+    },
+    [updateSettings],
+  )
+
   /* ---------- 拖拽打开（§7.3）：HTML5 事件控制遮罩；Wails 原生 OnFileDrop 取路径 ---------- */
   useEffect(() => {
     let depth = 0
@@ -399,6 +409,8 @@ export default function App() {
             registerMsg={registerMsg}
             onRegisterDefault={() => void handleRegisterDefault()}
             systemFonts={systemFonts}
+            zoomMsg={zoomMsg}
+            onZoomChange={(pct) => void handleZoomChange(pct)}
           />
         }
       />
