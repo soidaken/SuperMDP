@@ -1,3 +1,5 @@
+//go:build windows
+
 package main
 
 import (
@@ -10,7 +12,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// 系统字体枚举（GDI EnumFontFamiliesExW）：
+// 系统字体枚举（GDI EnumFontFamiliesExW，仅 Windows）：
 // 供前端"字体设置"使用——中文字体/英文字体选择器列出系统全部字体。
 
 var (
