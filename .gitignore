@@ -29,3 +29,7 @@ Thumbs.db
 !app/build/appicon.svg
 !app/build/appicon.png
 !app/build/windows/icon.ico
+
+# NSIS 安装器模板（OutFile 定制为 superMDP-Setup.exe，需入库）
+!app/build/windows/installer/
+!app/build/windows/installer/project.nsi
