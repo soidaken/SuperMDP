@@ -1,0 +1,65 @@
+name: Release
+
+# 打 tag 即发布：git tag v1.0.0 && git push origin v1.0.0
+# 自动在 Windows / macOS 上编译安装包并发布到 GitHub Releases
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.artifact }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: windows-amd64
+            wails-flags: -nsis -clean
+          - os: macos-latest
+            artifact: macos-arm64
+            wails-flags: -dmg -clean
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.x'
+          cache: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.14.0
+
+      - name: Build (wails)
+        working-directory: app
+        run: wails build ${{ matrix.wails-flags }}
+
+      - name: Package portable zip (Windows)
+        if: runner.os == 'Windows'
+        working-directory: app/build/bin
+        run: Compress-Archive -Path superMDP.exe -DestinationPath superMDP-${{ matrix.artifact }}.zip
+
+      - name: Package portable zip (macOS)
+        if: runner.os == 'macOS'
+        working-directory: app/build/bin
+        run: zip -r superMDP-${{ matrix.artifact }}.zip superMDP.app
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            app/build/bin/*-Setup.exe
+            app/build/bin/*.zip
+            app/build/bin/*.dmg
+          generate_release_notes: true

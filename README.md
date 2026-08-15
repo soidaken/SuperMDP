@@ -5,15 +5,29 @@
 
 基于 **Wails v2**（Go 后端 + 宿主系统 WebView2）与 **Vite + React + TypeScript** 构建。
 
+## 下载安装
+
+从 [Releases](https://github.com/soidaken/SuperMDP/releases) 下载对应平台的安装包（打 tag 自动构建）：
+
+| 平台 | 安装包 | 说明 |
+|---|---|---|
+| Windows (amd64) | `superMDP-Setup.exe` | NSIS 安装器，一键安装 |
+| Windows (amd64) | `superMDP-windows-amd64.zip` | 便携版，解压即用 |
+| macOS (Apple Silicon) | `superMDP.dmg` | 磁盘镜像，拖入 Applications 即可 |
+| macOS (Apple Silicon) | `superMDP-macos-arm64.zip` | 便携版，解压即用 |
+
+> macOS 应用未签名/未公证：首次打开请右键 → 打开（或系统设置 → 隐私与安全性 → 仍要打开）。
+
 ## 特性
 
 - **GFM 全特性渲染**：表格、任务列表、脚注、删除线、自动链接、嵌套引用
-- **代码高亮**：36+ 种语言，自写明暗双主题配色（与整体色板同族）
+- **代码高亮**：38 种语言，自写明暗双主题配色（Rosé Pine 语法色）
 - **数学公式**（KaTeX）与 **图表**（mermaid）：设置中可开关，按需懒加载
 - **原生文件能力**：系统文件对话框、拖拽打开、文件变更自动刷新（300ms 节流）、UTF-8 BOM / GBK / UTF-16 编码自动识别
-- **阅读体验**：明/暗主题（跟随系统、无闪烁切换）、可折叠目录 + 滚动跟随、键盘快捷键（`Ctrl+O` / `Ctrl+R` / `Ctrl+T` / `Ctrl+1`）
-- **安全**：DOMPurify 清洗 + mermaid 二次清洗，XSS 对抗测试 13 例零突破
+- **阅读体验**：Rosé Pine 双主题（默认浅色）、可折叠目录 + 滚动跟随、页面缩放（100/125/150%）、中英文字体自定义（系统字体）、键盘快捷键（`Ctrl+O` / `Ctrl+R` / `Ctrl+T` / `Ctrl+1`）
+- **安全**：DOMPurify 清洗 + mermaid 二次清洗，XSS 对抗测试 16 例零突破
 - **严格只读**：无任何编辑/导出入口
+- **大文件**：分段渲染 + 双 Web Worker，5MB+ 文件流畅打开、UI 不冻结
 
 ## 快速开始
 
@@ -68,4 +82,4 @@ cd app/frontend && npm install && npm test
 
 ## 许可
 
-内部项目。渲染依赖库版权归各自作者所有。
+[MIT](LICENSE) © 2026 soidaken。渲染依赖库版权归各自作者所有。

@@ -2,12 +2,19 @@
   "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "supermdp",
   "outputfilename": "superMDP",
-  "frontend:install": "npm install",
+  "frontend:install": "npm ci",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "superMDP",
-    "email": "dev@supermdp.local"
+    "name": "soidaken",
+    "email": "18586867+soidaken@users.noreply.github.com"
+  },
+  "info": {
+    "companyName": "soidaken",
+    "productName": "超级MD预览器",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2026 soidaken",
+    "comments": "只读 Markdown 预览器（SuperMDP）"
   }
 }
