@@ -41,6 +41,13 @@ jobs:
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.14.0
 
+      - name: Install NSIS (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install nsis -y --no-progress
+          Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\NSIS"
+
       - name: Build (wails)
         working-directory: app
         run: wails build ${{ matrix.wails-flags }}
