@@ -22,7 +22,7 @@ jobs:
             wails-flags: -nsis -clean
           - os: macos-latest
             artifact: macos-arm64
-            wails-flags: -dmg -clean
+            wails-flags: -clean
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +44,11 @@ jobs:
       - name: Build (wails)
         working-directory: app
         run: wails build ${{ matrix.wails-flags }}
+
+      - name: Package dmg (macOS)
+        if: runner.os == 'macOS'
+        working-directory: app/build/bin
+        run: hdiutil create -volname SuperMDP -srcfolder superMDP.app -ov -format UDZO superMDP.dmg
 
       - name: Package portable zip (Windows)
         if: runner.os == 'Windows'
