@@ -426,11 +426,11 @@ body {
   color: var(--mdp-fg);
   background: var(--mdp-bg-hover);
 }
-
-/* 激活项：中性胶囊底 + 主文本（无任何描边/指示线） */
+/* 激活项：主题强调色文字 + 强调淡底（明暗主题各用对应 --mdp-accent/--mdp-accent-soft）
+   明显但不刺眼；无任何描边/指示线 */
 .mdp-toc-item.active {
-  color: var(--mdp-fg);
-  background: var(--mdp-bg-active);
+  color: var(--mdp-accent);
+  background: var(--mdp-accent-soft);
   font-weight: 600;
 }
 
