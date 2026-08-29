@@ -224,9 +224,9 @@
 ### 6.3 目录侧栏 `.mdp-toc`
 
 - 结构：`.mdp-toc-title`（"目录"，11px、600、`uppercase`、`letter-spacing:.08em`、faint）→ 项列表。
-- 项 `.mdp-toc-item`：`display:block; padding:4px 18px; font-size:13px; color:fg-muted; border-left:2px solid transparent; white-space:nowrap; text-overflow:ellipsis`；hover→`fg + bg-hover`。
-- **激活项**：`color:fg; background:bg-active; border-left-color:accent`（2px accent 左条 = 激活态出场位；整行不做强调色，避免刺眼）
-- 嵌套层级用修饰类：`.lvl-1{ padding-left:18px } .lvl-2{32px} .lvl-3{46px} .lvl-4{60px} .lvl-5{74px} .lvl-6{88px}`（lvl-N 指标题级数 hN）。
+- 项 `.mdp-toc-item`：`display:block; margin:1px 8px; padding:4px 12px; font-size:13px; color:fg-muted; border-radius:999px`（**环状圆角/胶囊**：左右两边半圆；无描边）；hover→`fg + bg-hover`。
+- **激活项**：`color:fg; background:bg-active; font-weight:600`（胶囊中性底，**无描边、无指示线**）。
+- 嵌套层级用修饰类：`.lvl-1{ padding-left:10px } .lvl-2{24px} .lvl-3{38px} .lvl-4{52px} .lvl-5{66px} .lvl-6{80px}`（lvl-N 指标题级数 hN；14px 步进）。
 - 滚动跟随：高亮当前视口内标题对应项（交互见 §7.4）。
 
 ### 6.4 空状态 `.mdp-empty`
@@ -338,6 +338,7 @@
 | `Ctrl+O` | 打开文件 |
 | `Ctrl+R` / `F5` | 重新渲染当前文件 |
 | `Ctrl+T` | 切换明暗主题 |
+| `Ctrl+W` | 关闭窗口（退出应用，Windows 默认习惯） |
 | `Ctrl+1` | 显示/隐藏目录 |
 | `Esc` | 关闭弹层 / 拖拽遮罩 |
 

@@ -15,7 +15,7 @@ import { useFile } from './hooks/useFile'
 import { isMarkdownPath } from './lib/format'
 import { applyFonts } from './lib/fonts'
 import { GetStartupFile, GetSystemFonts, RegisterAssociations, SetZoomPref } from '../wailsjs/go/main/App'
-import { BrowserOpenURL, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime'
+import { BrowserOpenURL, OnFileDrop, OnFileDropOff, Quit } from '../wailsjs/runtime'
 
 type RenderState = 'idle' | 'rendering' | 'done' | 'error'
 
@@ -363,6 +363,10 @@ export default function App() {
       } else if (mod && key === '1') {
         e.preventDefault()
         setTocOpen((v) => !v)
+      } else if (mod && key === 'w') {
+        // Ctrl/Cmd+W：Windows 默认关闭当前前台窗口；此处直接退出应用
+        e.preventDefault()
+        Quit()
       } else if (e.key === 'Escape') {
         setPopoverOpen(false)
         setOverlayVisible(false)

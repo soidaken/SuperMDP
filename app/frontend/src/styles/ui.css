@@ -407,18 +407,18 @@ body {
 
 .mdp-toc-item {
   display: block;
-  padding: 4px 18px;
+  margin: 1px 8px;
+  padding: 4px 12px;
   font-size: var(--mdp-font-size-sm);
   line-height: 1.45;
   color: var(--mdp-fg-muted);
   text-decoration: none;
-  border-left: 2px solid transparent;
+  border-radius: 999px; /* 环状圆角（胶囊）：左右两边为半圆 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color var(--mdp-duration-fast) var(--mdp-ease),
-              background-color var(--mdp-duration-fast) var(--mdp-ease),
-              border-color var(--mdp-duration-fast) var(--mdp-ease);
+              background-color var(--mdp-duration-fast) var(--mdp-ease);
 }
 
 .mdp-toc-item:hover {
@@ -426,21 +426,20 @@ body {
   background: var(--mdp-bg-hover);
 }
 
-/* 激活项：中性淡底 + 主文本 + 2px accent 左条
-   （accent 仅作指示器，不做整行强调色，避免刺眼） */
+/* 激活项：中性胶囊底 + 主文本（无任何描边/指示线） */
 .mdp-toc-item.active {
   color: var(--mdp-fg);
   background: var(--mdp-bg-active);
-  border-left-color: var(--mdp-accent);
+  font-weight: 600;
 }
 
-/* 嵌套层级（lvl-N = 标题级数 hN） */
-.mdp-toc-item.lvl-1 { padding-left: 18px; }
-.mdp-toc-item.lvl-2 { padding-left: 32px; }
-.mdp-toc-item.lvl-3 { padding-left: 46px; }
-.mdp-toc-item.lvl-4 { padding-left: 60px; }
-.mdp-toc-item.lvl-5 { padding-left: 74px; }
-.mdp-toc-item.lvl-6 { padding-left: 88px; }
+/* 嵌套层级（lvl-N = 标题级数 hN）：紧凑缩进，14px 步进 */
+.mdp-toc-item.lvl-1 { padding-left: 10px; }
+.mdp-toc-item.lvl-2 { padding-left: 24px; }
+.mdp-toc-item.lvl-3 { padding-left: 38px; }
+.mdp-toc-item.lvl-4 { padding-left: 52px; }
+.mdp-toc-item.lvl-5 { padding-left: 66px; }
+.mdp-toc-item.lvl-6 { padding-left: 80px; }
 
 /* ==========================================================================
    7. 阅读区

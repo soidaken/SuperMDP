@@ -3,23 +3,23 @@
     "name": "5mb-pure-js",
     "sizeMB": 5.3,
     "sourceBytes": 5548215,
-    "mdRenderMs": 3091,
+    "mdRenderMs": 3179,
     "note": "markdown-it+hljs+katex 纯 JS 渲染（无 DOM）。WebView2 与 node 同为 V8，此数字近似真实浏览器 JS 成本。"
   },
   "1mb-full-pipeline": {
     "name": "1mb-full-pipeline",
     "sizeMB": 1,
-    "pureJsMs": 503,
-    "fullPipelineJsdomMs": 11598,
-    "jsdomOverheadFactor": 23.1,
+    "pureJsMs": 501,
+    "fullPipelineJsdomMs": 12051,
+    "jsdomOverheadFactor": 24,
     "note": "jsdom 的 DOMPurify/DOM 开销为悲观上界（真实 Chromium 原生 DOM 快一个数量级）；1MB 全管线通过执行者 30s 探针口径。"
   },
   "chunked-1mb-jsdom": {
     "name": "chunked-1mb-jsdom",
     "sizeMB": 1,
     "chunkCount": 17,
-    "chunkedPipelineMs": 11110,
-    "perChunkMs": 653.5,
+    "chunkedPipelineMs": 11212,
+    "perChunkMs": 659.5,
     "note": "jsdom 悲观上界：单块 64KB 的 markdown-it+清洗+增强。WebView2 原生 DOM 快一个数量级，且渲染在 Worker 进行、逐块 rAF 插入，UI 不冻结。"
   }
 }
