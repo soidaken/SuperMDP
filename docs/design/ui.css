@@ -434,6 +434,15 @@ body {
   font-weight: 600;
 }
 
+/* 暗色模式：胶囊背景更暗（贴近主背景）、文字更亮，增强层次与可读性 */
+[data-theme="dark"] .mdp-toc-item {
+  color: var(--mdp-fg);
+}
+[data-theme="dark"] .mdp-toc-item:hover {
+  color: var(--mdp-fg);
+  background: var(--mdp-bg-sunken);
+}
+
 /* 嵌套层级（lvl-N = 标题级数 hN）：用 margin-left 缩进，不撑大胶囊内部 */
 .mdp-toc-item.lvl-1 { margin-left: 10px; }
 .mdp-toc-item.lvl-2 { margin-left: 24px; }
