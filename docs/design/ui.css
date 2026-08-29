@@ -91,13 +91,15 @@
   --mdp-syn-addition: #286983;
   --mdp-syn-addition-bg: rgba(40, 105, 131, 0.12);
 
-  /* ---- 字体（中/英可被设置弹层覆盖：html 内联 --mdp-font-latin/--mdp-font-cjk） ---- */
-  --mdp-font-latin: "Segoe UI";
-  --mdp-font-cjk: "Microsoft YaHei";
+  /* ---- 字体（中/英可被设置弹层覆盖：html 内联 --mdp-font-latin/--mdp-font-cjk） ----
+     默认即内置字体（随应用分发）：JetBrains Mono（拉丁）+ HarmonyOS Sans SC（CJK）。
+     Mono 栈也接入 CJK，保证代码/行内代码里的中文同样用内置字体，不回退系统。 */
+  --mdp-font-latin: "JetBrains Mono";
+  --mdp-font-cjk: "HarmonyOS Sans SC";
   --mdp-font-sans: var(--mdp-font-latin), var(--mdp-font-cjk), "PingFang SC",
                    "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
-  --mdp-font-mono: "JetBrains Mono", Consolas, "Cascadia Mono",
-                   "SF Mono", Menlo, monospace;
+  --mdp-font-mono: "JetBrains Mono", var(--mdp-font-cjk), "Consolas",
+                   "Cascadia Mono", "SF Mono", Menlo, monospace;
   --mdp-font-size-base: 15px;
   --mdp-font-size-sm: 13px;
   --mdp-font-size-xs: 12px;
@@ -134,7 +136,7 @@
   --mdp-toolbar-h: 44px;
   --mdp-statusbar-h: 26px;
   --mdp-toc-w: 240px;
-  --mdp-content-max-w: 760px;
+  --mdp-content-max-w: 800px;
   --mdp-content-pad: 48px;
 
   /* ---- z-index ---- */
@@ -407,16 +409,15 @@ body {
 
 .mdp-toc-item {
   display: block;
-  margin: 1px 8px;
-  padding: 4px 12px;
+  width: fit-content;       /* 胶囊宽度只包裹文字包围盒 */
+  margin: 1px 4px;          /* Y 方向 item 间距由内部高度+margin 共同决定 */
+  padding: 3px 12px;        /* 高度略降，让 item 之间在 Y 向更舒展 */
   font-size: var(--mdp-font-size-sm);
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--mdp-fg-muted);
   text-decoration: none;
   border-radius: 999px; /* 环状圆角（胶囊）：左右两边为半圆 */
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   transition: color var(--mdp-duration-fast) var(--mdp-ease),
               background-color var(--mdp-duration-fast) var(--mdp-ease);
 }
@@ -433,13 +434,13 @@ body {
   font-weight: 600;
 }
 
-/* 嵌套层级（lvl-N = 标题级数 hN）：紧凑缩进，14px 步进 */
-.mdp-toc-item.lvl-1 { padding-left: 10px; }
-.mdp-toc-item.lvl-2 { padding-left: 24px; }
-.mdp-toc-item.lvl-3 { padding-left: 38px; }
-.mdp-toc-item.lvl-4 { padding-left: 52px; }
-.mdp-toc-item.lvl-5 { padding-left: 66px; }
-.mdp-toc-item.lvl-6 { padding-left: 80px; }
+/* 嵌套层级（lvl-N = 标题级数 hN）：用 margin-left 缩进，不撑大胶囊内部 */
+.mdp-toc-item.lvl-1 { margin-left: 10px; }
+.mdp-toc-item.lvl-2 { margin-left: 24px; }
+.mdp-toc-item.lvl-3 { margin-left: 38px; }
+.mdp-toc-item.lvl-4 { margin-left: 52px; }
+.mdp-toc-item.lvl-5 { margin-left: 66px; }
+.mdp-toc-item.lvl-6 { margin-left: 80px; }
 
 /* ==========================================================================
    7. 阅读区
