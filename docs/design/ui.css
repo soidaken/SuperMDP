@@ -408,10 +408,10 @@ body {
 }
 
 .mdp-toc-item {
-  display: block;
-  width: fit-content;       /* 胶囊宽度只包裹文字包围盒 */
-  margin: 1px 4px;          /* Y 方向 item 间距由内部高度+margin 共同决定 */
-  padding: 3px 12px;        /* 高度略降，让 item 之间在 Y 向更舒展 */
+  display: table;       /* 收缩到内容宽度（胶囊只包文字包围盒），且块级独占一行 */
+  width: auto;
+  margin: 1px 4px;      /* Y 方向 item 间距由内部高度+margin 共同决定 */
+  padding: 3px 12px;    /* 高度略降，让 item 之间在 Y 向更舒展 */
   font-size: var(--mdp-font-size-sm);
   line-height: 1.4;
   color: var(--mdp-fg-muted);
