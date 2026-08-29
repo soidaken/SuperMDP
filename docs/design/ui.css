@@ -434,13 +434,19 @@ body {
   font-weight: 600;
 }
 
-/* 暗色模式：胶囊背景更暗（贴近主背景）、文字更亮，增强层次与可读性 */
+/* 暗色模式：胶囊背景非常暗、文字亮 —— 三态都用暗色阶，选中只略亮、文字不变 */
 [data-theme="dark"] .mdp-toc-item {
-  color: var(--mdp-fg);
+  color: var(--mdp-fg);               /* 亮文字 */
+  background: var(--mdp-bg-sunken);   /* 默认胶囊：非常暗（贴近主背景） */
 }
 [data-theme="dark"] .mdp-toc-item:hover {
   color: var(--mdp-fg);
-  background: var(--mdp-bg-sunken);
+  background: var(--mdp-bg-hover);    /* 悬停：暗背景略亮 */
+}
+[data-theme="dark"] .mdp-toc-item.active {
+  color: var(--mdp-fg);               /* 选中：文字不变（不换强调色） */
+  background: var(--mdp-bg-active);   /* 选中：背景只亮一点点 */
+  font-weight: 600;
 }
 
 /* 嵌套层级（lvl-N = 标题级数 hN）：用 margin-left 缩进，不撑大胶囊内部 */
